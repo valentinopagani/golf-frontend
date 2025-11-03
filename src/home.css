@@ -1,0 +1,505 @@
+.body {
+	margin-top: 64px;
+	margin-bottom: 150px;
+}
+
+.banner_home {
+	background-image: url('../public/assets/banner_optimizada.jpg');
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
+	height: calc(100vh - 64px);
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	color: white;
+}
+
+.banner_home h1 {
+	font-size: 60px;
+	font-weight: 800;
+}
+
+.banner_home h1 b {
+	color: #ecc875;
+	font-weight: 800;
+}
+
+.banner_home img {
+	transform: scaleX(-1);
+	width: 250px;
+}
+
+.banner_home p {
+	margin: 10px 0 15px 0;
+	font-size: 20px;
+}
+
+.banner_home a {
+	color: white;
+	border: 1px solid white;
+	border-radius: 12px;
+	padding: 5px 20px;
+	margin-right: 20px;
+	font-size: 18px;
+	background-color: #0000004a;
+}
+
+.esfumado {
+	margin-top: -40px;
+	width: 100%;
+	height: 50px;
+	background: linear-gradient(to bottom, #ffffff00 25%, #fff 75%);
+}
+
+.body_home {
+	width: 90%;
+	margin: auto;
+}
+
+.body_home h2 {
+	font-size: 35px;
+	text-align: center;
+	font-weight: bold;
+}
+
+.desc_home {
+	margin: 50px auto;
+	width: 70%;
+	text-align: center;
+}
+
+.desc_home h3 {
+	font-weight: bold;
+}
+
+.desc_home p {
+	color: #333;
+	font-size: 14px;
+}
+
+.clubes_banner_home {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 20px 0;
+}
+
+.torneos_home {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+}
+
+.paper img {
+	width: 120px;
+}
+
+.body_resultados {
+	width: 90%;
+	margin: auto;
+}
+
+.title_banner {
+	margin: 114px 0 50px 0;
+	background-image: url('../public/assets/titlebanner.jpg');
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
+	height: 150px;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+}
+
+.title_banner h2 {
+	font-size: 32px;
+	font-style: italic;
+	color: white;
+	font-weight: 900;
+}
+
+.tabla_est {
+	margin: 10px auto;
+	font-size: 14px;
+}
+
+.tabla_est .pos {
+	width: 20px;
+}
+
+.tabla_est .dni {
+	width: 60px;
+}
+
+.tabla_est .jug {
+	width: 250px;
+}
+
+.tabla_est .club {
+	width: 250px;
+}
+
+.tabla_est .hdc {
+	width: 50px;
+	text-align: center;
+	background-color: #fff5cc;
+}
+
+.tabla_est .ida,
+.tabla_est .vuelta {
+	width: 50px;
+	text-align: center;
+	background-color: #29b648;
+	color: white;
+}
+
+.tabla_est .score {
+	width: 50px;
+	text-align: center;
+	cursor: pointer;
+	background-color: #339e9e;
+	color: white;
+}
+
+.pointer {
+	cursor: pointer;
+}
+
+.tabla_jugador {
+	margin: 0 auto;
+	width: 100%;
+	font-size: 15px;
+}
+
+.tabla_jugador caption {
+	background-color: #fae1be;
+}
+
+.tabla_jugador th {
+	background-color: #f5f1b5;
+	padding: 4px 6px;
+	text-align: center;
+}
+
+.tabla_jugador td {
+	padding: 4px 6px;
+	text-align: center;
+}
+
+.score {
+	color: #008080;
+}
+
+.par {
+	color: #0dbe00;
+}
+
+.birdie {
+	color: #d3ac10;
+}
+
+.bogey {
+	color: #4094e7;
+}
+
+.dbogey {
+	color: #be3430;
+}
+
+.aguila {
+	color: #37cc9a;
+}
+
+.torneos_ins {
+	padding: 10px 80px;
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap
+}
+
+.modal_cont_ins {
+	max-width: 85%;
+	max-height: 83vh;
+	padding: 10px 20px;
+	border-radius: 12px;
+	background-color: white;
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.modal_cont_ins h3 {
+	font-size: 25px;
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+.modal_cont_ins_contain {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+}
+
+.modal_cont_ins_contain div {
+	max-width: 420px;
+}
+
+.modal_cont_ins form label {
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.modal_cont_ins form label input,
+.modal_cont_ins form label select {
+	flex: 1;
+	margin-left: 8px;
+	box-sizing: border-box;
+}
+
+.modal_cont_ins_contain span {
+	display: block;
+}
+
+footer {
+	width: 100%;
+	position: absolute;
+	bottom: 0;
+}
+
+footer div {
+	width: 100%;
+	height: 80px;
+	background-color: #cccccc;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 15;
+	position: relative;
+}
+
+footer .draw_player {
+	width: 70px;
+	position: absolute;
+	top: -70px;
+	left: 50px;
+}
+
+footer .logo_footer {
+	width: 30px;
+	margin: 0 15px;
+}
+
+@media (max-width: 900px) {
+
+	.MuiContainer-root,
+	.MuiContainer-maxWidthXl,
+	.css-hhdjsd-MuiContainer-root {
+		height: 64px;
+	}
+
+	.banner_home {
+		flex-direction: column;
+		justify-content: center;
+		text-align: center;
+		height: calc(95vh - 64px);
+	}
+
+	.banner_home h1 {
+		margin-top: -50px;
+		font-size: 45px;
+	}
+
+	.banner_home p {
+		font-size: 12px;
+	}
+
+	.banner_home a {
+		font-size: 12px;
+		padding: 4px 18px;
+		margin-right: 15px;
+	}
+
+	.banner_home img {
+		width: 150px;
+		margin-top: 80px;
+	}
+
+	.body_home h2 {
+		font-size: 25px;
+	}
+
+	.desc_home {
+		width: 100%;
+	}
+
+	.desc_home h3 {
+		font-size: 16px;
+	}
+
+	.desc_home p {
+		font-size: 12px;
+	}
+
+	.clubes_banner_home {
+		flex-direction: column;
+		justify-content: center;
+		margin: 20px 0;
+	}
+
+	.paper {
+		width: 85vw;
+		margin: 10px 0 !important;
+		padding: 2px 5px !important;
+	}
+
+	.paper img {
+		width: 80px;
+	}
+
+	.paper h6 {
+		font-size: 16px;
+		font-weight: 900;
+	}
+
+	.paper span {
+		font-size: 14px;
+	}
+
+	.paper .MuiChip-label {
+		font-size: 10px;
+	}
+
+	.title_banner {
+		margin: 104px 0 40px 0;
+		height: 100px;
+	}
+
+	.title_banner h2 {
+		font-size: 22px;
+		text-align: center;
+	}
+
+	.paper_res {
+		width: 80vw !important;
+		flex-direction: column;
+		padding: 5px 12px !important;
+	}
+
+	.paper_res div {
+		width: 100%;
+		margin: 8px 0;
+	}
+
+	.paper_res h6 {
+		font-size: 16px;
+	}
+
+	.paper_res span {
+		font-size: 14px;
+	}
+
+	.modal_cont {
+		max-width: 80vw;
+		max-height: 70vh;
+	}
+
+	.modal_cont h4 {
+		font-size: 12px;
+	}
+
+	.modal_cont h3 {
+		font-size: 18px;
+	}
+
+	.modal_cont .modal_title h3 {
+		font-size: 18px;
+		/* max-width: 180px; */
+	}
+
+	.modal_cont .modal_title select {
+		width: 80px;
+		padding: 0;
+		font-size: 10px !important;
+	}
+
+	.table_container {
+		width: 100%;
+		overflow-x: auto;
+	}
+
+	.table_container table {
+		width: 1000px;
+	}
+
+	.modal_cont table td,
+	.modal_cont table th,
+	.modal_cont table caption {
+		padding: 4px 5px;
+		font-size: 15px;
+	}
+
+	caption {
+		text-align: start;
+	}
+
+	.est_bts button {
+		margin: 0 5px;
+		font-size: 14px;
+		padding: 2px 6px !important;
+	}
+
+	.est_bts svg {
+		display: none;
+	}
+
+	.grafic_container {
+		width: 100% !important;
+		overflow-x: auto;
+		display: block !important;
+	}
+
+	.torta {
+		margin-left: auto;
+		width: 200px !important;
+		height: 200px !important;
+	}
+
+	.estadisticas form {
+		width: 300px;
+		margin: auto;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.estadisticas form input {
+		width: 286px !important;
+	}
+
+	.estadisticas form button {
+		width: 300px;
+	}
+
+	footer .draw_player {
+		width: 35px;
+		position: absolute;
+		top: -40px;
+		left: 10px;
+	}
+
+	footer h3 {
+		font-size: 15px;
+	}
+
+	footer .logo_footer {
+		margin: 0 10px;
+	}
+}

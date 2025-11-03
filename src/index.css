@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+	margin: 0;
+	font-family: 'Noto Sans', sans-serif;
+	font-weight: 600;
+}
+
+html {
+	min-height: 100vh;
+	position: relative;
+}
+
+::selection {
+	color: white;
+	background-color: #008000;
+}
+
+button {
+	cursor: pointer;
+}
+
+a {
+	text-decoration: none;
+	color: white;
+}
+
+input,
+textarea {
+	outline: none;
+}
+
+.cursor {
+	cursor: alias;
+}
