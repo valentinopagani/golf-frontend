@@ -35,7 +35,7 @@ function JugadoresTorneo({ club }) {
 			.get(`http://localhost:3001/jugadores`)
 			.then((response) => setJugadores(response.data))
 			.catch((error) => console.error(error));
-	}, []);
+	}, [club.id]);
 
 	const idsTorneosAdmin = torneos.map((t) => t.id);
 	useEffect(() => {
@@ -43,7 +43,7 @@ function JugadoresTorneo({ club }) {
 			.get(`http://localhost:3001/inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
 			.then((response) => setJugadoresTorneo(response.data))
 			.catch((error) => console.error(error));
-	}, [torneos]);
+	}, [torneos, idsTorneosAdmin]);
 
 	useEffect(() => {
 		setFilteredTorneo(torneos.find((torneo) => torneo.id === filterTorneo));

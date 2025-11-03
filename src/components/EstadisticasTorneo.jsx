@@ -18,7 +18,7 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaS
 			.get(`http://localhost:3001/jugadoresFiltrados/${torneo.id}`)
 			.then((response) => setJugadoresFiltrados(response.data))
 			.catch((error) => console.error(error));
-	}, []);
+	}, [torneo.id]);
 
 	async function handleJugadorClick(jugador) {
 		await setJugadorDatos(jugador);

@@ -14,7 +14,7 @@ function TorneosResultados({ torneo }) {
 			.get(`http://localhost:3001/inscriptos?torneo=${torneo.id}`)
 			.then((response) => setJugadores(response.data))
 			.catch((error) => console.error(error));
-	}, []);
+	}, [torneo.id]);
 
 	const getScore = (jugador, categoria) => {
 		if (categoria.nombre.toLowerCase().includes('gross') || categoria.nombre.toLowerCase().includes('scratch')) {

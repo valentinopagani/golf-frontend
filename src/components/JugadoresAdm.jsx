@@ -14,7 +14,7 @@ function JugadoresAdm({ club }) {
 			.get(`http://localhost:3001/jugadores?nombreClub=${club.nombre}&nombreDni=${filtro}`)
 			.then((response) => setJugadores(response.data))
 			.catch((error) => console.error(error));
-	}, [filtro]);
+	}, [filtro, club.nombre]);
 
 	const fechaNacimiento = isOpen ? jugadorData.fech_nac.split('/').reverse().join('-') : 0;
 

@@ -20,7 +20,7 @@ function ModalEst({ torneo, jugadorDatos, setIsOpen, condicion }) {
 			.get(`http://localhost:3001/canchas?idCancha=${torneo.cancha}`)
 			.then((response) => setDatosCancha(response.data[0]))
 			.catch((error) => console.error(error));
-	}, []);
+	}, [torneo.cancha]);
 
 	const scores = useMemo(() => jugadorDatos.scores || {}, [jugadorDatos.scores]);
 	const numRondas = torneo.rondas;

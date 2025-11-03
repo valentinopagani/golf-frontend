@@ -17,14 +17,14 @@ function AdminClubs({ user }) {
 		if (!window.location.pathname.includes('/administrador')) {
 			navigate('/administrador');
 		}
-	}, []);
+	}, [navigate]);
 
 	useEffect(() => {
 		axios
 			.get(`http://localhost:3001/clubes?vinculo=${userId}`)
 			.then((response) => setClubes(response.data))
 			.catch((error) => console.error(error));
-	}, []);
+	}, [userId]);
 
 	return (
 		<div className='admin_club'>

@@ -13,7 +13,7 @@ function Historial({ dni }) {
 			.get(`http://localhost:3001/inscriptos/historial?dni=${dni}`)
 			.then((response) => setHistorialJugador(response.data))
 			.catch((error) => console.error(error));
-	}, []);
+	}, [dni]);
 
 	const renderTorneosJugados = () => {
 		return historialJugador.inscriptos?.map((jugador) => {

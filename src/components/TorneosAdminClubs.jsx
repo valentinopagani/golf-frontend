@@ -20,7 +20,6 @@ function TorneosAdminClubs({ club, user }) {
 	const [modal, setModal] = useState(false);
 	const [editModal, setEditModal] = useState(false);
 	const [datosEdit, setDatosEdit] = useState([]);
-	const [clubEdit, setClubEdit] = useState([]);
 	const [jugadoresTorneos, setJugadoresTorneos] = useState([]);
 	const [insc, setInsc] = useState(false);
 	const [inscEdit, setInscEdit] = useState(false);
@@ -50,7 +49,7 @@ function TorneosAdminClubs({ club, user }) {
 			.get(`http://localhost:3001/inscriptos?clubReg=${club.id}`)
 			.then((response) => setJugadoresTorneos(response.data))
 			.catch((error) => console.error(error));
-	}, []);
+	}, [club.id]);
 
 	// SELECCIONAR CATEGORIAS
 	const handleCheckboxChange = (event) => {
@@ -70,7 +69,6 @@ function TorneosAdminClubs({ club, user }) {
 	// ABRIR MODAL DE EDICION
 	const openEditModal = (torneo, club) => {
 		setDatosEdit(torneo);
-		setClubEdit(club);
 		setSelectedCategorias(torneo.categorias.map((cat) => cat.nombre));
 		setInscEdit(torneo.valor !== null ? true : false);
 		setEditModal(true);
