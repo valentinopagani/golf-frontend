@@ -17,7 +17,7 @@ function ModalEst({ torneo, jugadorDatos, setIsOpen, condicion }) {
 
 	useEffect(() => {
 		axios
-			.get(`https://golf-backend-production-ad4e.up.railway.app//canchas?idCancha=${torneo.cancha}`)
+			.get(`https://golf-backend-production-ad4e.up.railway.app/canchas?idCancha=${torneo.cancha}`)
 			.then((response) => setDatosCancha(response.data[0]))
 			.catch((error) => console.error(error));
 	}, [torneo.cancha]);

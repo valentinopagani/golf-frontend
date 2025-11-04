@@ -10,7 +10,7 @@ function Historial({ dni }) {
 
 	useEffect(() => {
 		axios
-			.get(`https://golf-backend-production-ad4e.up.railway.app//inscriptos/historial?dni=${dni}`)
+			.get(`https://golf-backend-production-ad4e.up.railway.app/inscriptos/historial?dni=${dni}`)
 			.then((response) => setHistorialJugador(response.data))
 			.catch((error) => console.error(error));
 	}, [dni]);

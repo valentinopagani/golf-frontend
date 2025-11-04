@@ -11,7 +11,7 @@ function JugadoresAdm({ club }) {
 
 	useEffect(() => {
 		axios
-			.get(`https://golf-backend-production-ad4e.up.railway.app//jugadores?nombreClub=${club.nombre}&nombreDni=${filtro}`)
+			.get(`https://golf-backend-production-ad4e.up.railway.app/jugadores?nombreClub=${club.nombre}&nombreDni=${filtro}`)
 			.then((response) => setJugadores(response.data))
 			.catch((error) => console.error(error));
 	}, [filtro, club.nombre]);
@@ -82,14 +82,14 @@ function JugadoresAdm({ club }) {
 								const fech_nac = e.target.fech_nac.value.split('-').reverse().join('/');
 								const sexo = e.target.sexo.value;
 								try {
-									await axios.put('https://golf-backend-production-ad4e.up.railway.app//jugadores/' + jugadorData.id, {
+									await axios.put('https://golf-backend-production-ad4e.up.railway.app/jugadores/' + jugadorData.id, {
 										nombre,
 										dni,
 										fech_nac,
 										sexo
 									});
 									setIsOpen(false);
-									const response = await axios.get(`https://golf-backend-production-ad4e.up.railway.app//jugadores?nombreClub=${club.nombre}&nombreDni=${filtro}`);
+									const response = await axios.get(`https://golf-backend-production-ad4e.up.railway.app/jugadores?nombreClub=${club.nombre}&nombreDni=${filtro}`);
 									setJugadores(response.data);
 								} catch (error) {
 									alert('Error al actualizar jugador');

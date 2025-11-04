@@ -7,12 +7,12 @@ function EstadisticasCancha() {
 
 	useEffect(() => {
 		axios
-			.get('https://golf-backend-production-ad4e.up.railway.app//clubes')
+			.get('https://golf-backend-production-ad4e.up.railway.app/clubes')
 			.then((response) => setClubes(response.data))
 			.catch((error) => console.error('Error:', error));
 
 		axios
-			.get('https://golf-backend-production-ad4e.up.railway.app//estadisticas/canchasStats')
+			.get('https://golf-backend-production-ad4e.up.railway.app/estadisticas/canchasStats')
 			.then((response) => setDatos(response.data))
 			.catch((error) => {
 				console.error('Error:', error);
@@ -92,15 +92,15 @@ export default EstadisticasCancha;
 // 	const [golpes, setGolpes] = useState({});
 
 // 	async function getClubes() {
-// 		const res = await axios.get('https://golf-backend-production-ad4e.up.railway.app//clubes');
+// 		const res = await axios.get('https://golf-backend-production-ad4e.up.railway.app/clubes');
 // 		return res.data;
 // 	}
 // 	async function getCanchas() {
-// 		const res = await axios.get('https://golf-backend-production-ad4e.up.railway.app//canchas');
+// 		const res = await axios.get('https://golf-backend-production-ad4e.up.railway.app/canchas');
 // 		return res.data;
 // 	}
 // 	async function getGolpes() {
-// 		const res = await axios.get('https://golf-backend-production-ad4e.up.railway.app//golpes');
+// 		const res = await axios.get('https://golf-backend-production-ad4e.up.railway.app/golpes');
 // 		return res.data;
 // 	}
 

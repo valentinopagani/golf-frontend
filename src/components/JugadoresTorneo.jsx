@@ -27,12 +27,12 @@ function JugadoresTorneo({ club }) {
 
 	useEffect(() => {
 		axios
-			.get(`https://golf-backend-production-ad4e.up.railway.app//torneos?tipo=inscripcionesadmin&clubVinculo=${club.id}`)
+			.get(`https://golf-backend-production-ad4e.up.railway.app/torneos?tipo=inscripcionesadmin&clubVinculo=${club.id}`)
 			.then((response) => setTorneos(response.data))
 			.catch((error) => console.error(error));
 
 		axios
-			.get(`https://golf-backend-production-ad4e.up.railway.app//jugadores`)
+			.get(`https://golf-backend-production-ad4e.up.railway.app/jugadores`)
 			.then((response) => setJugadores(response.data))
 			.catch((error) => console.error(error));
 	}, [club.id]);
@@ -40,7 +40,7 @@ function JugadoresTorneo({ club }) {
 	const idsTorneosAdmin = torneos.map((t) => t.id);
 	useEffect(() => {
 		axios
-			.get(`https://golf-backend-production-ad4e.up.railway.app//inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
+			.get(`https://golf-backend-production-ad4e.up.railway.app/inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
 			.then((response) => setJugadoresTorneo(response.data))
 			.catch((error) => console.error(error));
 	}, [torneos, idsTorneosAdmin]);
@@ -82,9 +82,9 @@ function JugadoresTorneo({ club }) {
 	async function cerrarTorneo(torneoId) {
 		try {
 			if (!window.confirm('¿Deseas cerrar este torneo?')) return;
-			await axios.put(`https://golf-backend-production-ad4e.up.railway.app//torneos/${torneoId}/finalizar`, { finalizado: 1 });
+			await axios.put(`https://golf-backend-production-ad4e.up.railway.app/torneos/${torneoId}/finalizar`, { finalizado: 1 });
 			await axios
-				.get('https://golf-backend-production-ad4e.up.railway.app//torneos?tipo=inscripcionesadmin')
+				.get('https://golf-backend-production-ad4e.up.railway.app/torneos?tipo=inscripcionesadmin')
 				.then((response) => setTorneos(response.data))
 				.catch((error) => console.error(error));
 		} catch (error) {
@@ -127,9 +127,9 @@ function JugadoresTorneo({ club }) {
 						dni = filteredJugadores[0].dni;
 						nombre = filteredJugadores[0].nombre;
 						try {
-							await axios.post('https://golf-backend-production-ad4e.up.railway.app//inscriptos', { dni, nombre, torneo, categoria, handicap, clubReg, clubSocio, fech_alta });
+							await axios.post('https://golf-backend-production-ad4e.up.railway.app/inscriptos', { dni, nombre, torneo, categoria, handicap, clubReg, clubSocio, fech_alta });
 							await axios
-								.get(`https://golf-backend-production-ad4e.up.railway.app//inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
+								.get(`https://golf-backend-production-ad4e.up.railway.app/inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
 								.then((response) => setJugadoresTorneo(response.data))
 								.catch((error) => console.error(error));
 						} catch (error) {
@@ -140,14 +140,14 @@ function JugadoresTorneo({ club }) {
 						const fech_nac = fecha[2] + '/' + fecha[1] + '/' + fecha[0];
 						const sexo = e.target.sexo.value;
 						try {
-							await axios.post('https://golf-backend-production-ad4e.up.railway.app//jugadores', { dni, nombre, fech_nac, sexo, clubReg, fech_alta });
-							await axios.post('https://golf-backend-production-ad4e.up.railway.app//inscriptos', { dni, nombre, torneo, categoria, handicap, clubReg, clubSocio, fech_alta });
+							await axios.post('https://golf-backend-production-ad4e.up.railway.app/jugadores', { dni, nombre, fech_nac, sexo, clubReg, fech_alta });
+							await axios.post('https://golf-backend-production-ad4e.up.railway.app/inscriptos', { dni, nombre, torneo, categoria, handicap, clubReg, clubSocio, fech_alta });
 							await axios
-								.get(`https://golf-backend-production-ad4e.up.railway.app//jugadores?nombreClub=${club.nombre}`)
+								.get(`https://golf-backend-production-ad4e.up.railway.app/jugadores?nombreClub=${club.nombre}`)
 								.then((response) => setJugadores(response.data))
 								.catch((error) => console.error(error));
 							await axios
-								.get(`https://golf-backend-production-ad4e.up.railway.app//inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
+								.get(`https://golf-backend-production-ad4e.up.railway.app/inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
 								.then((response) => setJugadoresTorneo(response.data))
 								.catch((error) => console.error(error));
 						} catch (error) {
@@ -289,9 +289,9 @@ function JugadoresTorneo({ club }) {
 																onClick={async () => {
 																	if (!window.confirm(`¿Seguro que deseas eliminar a ${jugador.nombre}?`)) return;
 																	try {
-																		await axios.delete(`https://golf-backend-production-ad4e.up.railway.app//inscriptos/${jugador.id}`);
+																		await axios.delete(`https://golf-backend-production-ad4e.up.railway.app/inscriptos/${jugador.id}`);
 																		await axios
-																			.get(`https://golf-backend-production-ad4e.up.railway.app//inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
+																			.get(`https://golf-backend-production-ad4e.up.railway.app/inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
 																			.then((response) => setJugadoresTorneo(response.data))
 																			.catch((error) => console.error(error));
 																	} catch (error) {

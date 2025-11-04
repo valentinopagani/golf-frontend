@@ -11,9 +11,9 @@
 							const cant_hoyos = parseInt(e.target[1].value);
 							const clubVinculo = club.id;
 							try {
-								await axios.post('https://golf-backend-production-ad4e.up.railway.app//canchas', { nombre, cant_hoyos, clubVinculo });
+								await axios.post('https://golf-backend-production-ad4e.up.railway.app/canchas', { nombre, cant_hoyos, clubVinculo });
 								await axios
-									.get('https://golf-backend-production-ad4e.up.railway.app//canchas')
+									.get('https://golf-backend-production-ad4e.up.railway.app/canchas')
 									.then((response) => setCanchas(response.data))
 									.catch((error) => console.error(error));
 								e.target.reset();
@@ -53,9 +53,9 @@
 													onClick={async () => {
 														if (!window.confirm(`¿Seguro que deseas eliminar cancha ${cancha.nombre}?`)) return;
 														try {
-															await axios.delete(`https://golf-backend-production-ad4e.up.railway.app//canchas/${cancha.id}`);
+															await axios.delete(`https://golf-backend-production-ad4e.up.railway.app/canchas/${cancha.id}`);
 															await axios
-																.get('https://golf-backend-production-ad4e.up.railway.app//canchas')
+																.get('https://golf-backend-production-ad4e.up.railway.app/canchas')
 																.then((response) => setCanchas(response.data))
 																.catch((error) => console.error(error));
 															alert('Cancha eliminada correctamente!');
@@ -141,11 +141,11 @@
 							onSubmit={async (e) => {
 								e.preventDefault();
 								try {
-									await axios.put(`https://golf-backend-production-ad4e.up.railway.app//canchas/${canchaToEdit.id}/hoyos`, {
+									await axios.put(`https://golf-backend-production-ad4e.up.railway.app/canchas/${canchaToEdit.id}/hoyos`, {
 										hoyos: editHoyos,
 										parCancha: Object.values(editHoyos).reduce((acc, hoyo) => acc + Number(hoyo.par), 0)
 									});
-									const response = await axios.get('https://golf-backend-production-ad4e.up.railway.app//canchas');
+									const response = await axios.get('https://golf-backend-production-ad4e.up.railway.app/canchas');
 									setCanchas(response.data);
 									alert('Cancha actualizada!');
 									setEditModalOpen(false);

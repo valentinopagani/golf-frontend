@@ -9,7 +9,7 @@ function Modal({ torneoDatos, jugadorDatos, setJugadoresTorneo, idsTorneosAdmin,
 
 	useEffect(() => {
 		axios
-			.get('https://golf-backend-production-ad4e.up.railway.app//canchas')
+			.get('https://golf-backend-production-ad4e.up.railway.app/canchas')
 			.then((response) => setCanchas(response.data))
 			.catch((error) => console.error(error));
 	}, []);
@@ -60,7 +60,7 @@ function Modal({ torneoDatos, jugadorDatos, setJugadoresTorneo, idsTorneosAdmin,
 		}
 		const totalScore = Object.values(scores).reduce((acc, score) => acc + score, 0);
 		try {
-			await axios.put('https://golf-backend-production-ad4e.up.railway.app//inscriptos/score', {
+			await axios.put('https://golf-backend-production-ad4e.up.railway.app/inscriptos/score', {
 				id: jugadorDatos.id,
 				scores: updatedScores,
 				totalScore
@@ -68,7 +68,7 @@ function Modal({ torneoDatos, jugadorDatos, setJugadoresTorneo, idsTorneosAdmin,
 			setScores({});
 			setIsOpen(false);
 			await axios
-				.get(`https://golf-backend-production-ad4e.up.railway.app//inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
+				.get(`https://golf-backend-production-ad4e.up.railway.app/inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
 				.then((response) => setJugadoresTorneo(response.data))
 				.catch((error) => console.error(error));
 		} catch (error) {

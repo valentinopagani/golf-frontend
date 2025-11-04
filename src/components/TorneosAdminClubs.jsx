@@ -26,27 +26,27 @@ function TorneosAdminClubs({ club, user }) {
 
 	useEffect(() => {
 		axios
-			.get(`https://golf-backend-production-ad4e.up.railway.app//canchas?idClub=${club.id}`)
+			.get(`https://golf-backend-production-ad4e.up.railway.app/canchas?idClub=${club.id}`)
 			.then((response) => setCanchas(response.data))
 			.catch((error) => console.error(error));
 
 		axios
-			.get('https://golf-backend-production-ad4e.up.railway.app//torneos?tipo=proximos')
+			.get('https://golf-backend-production-ad4e.up.railway.app/torneos?tipo=proximos')
 			.then((response) => setTorneosProximos(response.data))
 			.catch((error) => console.error(error));
 
 		axios
-			.get('https://golf-backend-production-ad4e.up.railway.app//torneos?tipo=antiguos')
+			.get('https://golf-backend-production-ad4e.up.railway.app/torneos?tipo=antiguos')
 			.then((response) => setTorneosAntiguos(response.data))
 			.catch((error) => console.error(error));
 
 		axios
-			.get(`https://golf-backend-production-ad4e.up.railway.app//categorias?club=${club.id}`)
+			.get(`https://golf-backend-production-ad4e.up.railway.app/categorias?club=${club.id}`)
 			.then((response) => setCategorias(response.data))
 			.catch((error) => console.error(error));
 
 		axios
-			.get(`https://golf-backend-production-ad4e.up.railway.app//inscriptos?clubReg=${club.id}`)
+			.get(`https://golf-backend-production-ad4e.up.railway.app/inscriptos?clubReg=${club.id}`)
 			.then((response) => setJugadoresTorneos(response.data))
 			.catch((error) => console.error(error));
 	}, [club.id]);
@@ -105,9 +105,9 @@ function TorneosAdminClubs({ club, user }) {
 						const nombre = e.target.cat_nombre.value;
 						const vinculo = club.id;
 						try {
-							await axios.post('https://golf-backend-production-ad4e.up.railway.app//categorias', { nombre, vinculo });
+							await axios.post('https://golf-backend-production-ad4e.up.railway.app/categorias', { nombre, vinculo });
 							await axios
-								.get(`https://golf-backend-production-ad4e.up.railway.app//categorias?club=${club.id}`)
+								.get(`https://golf-backend-production-ad4e.up.railway.app/categorias?club=${club.id}`)
 								.then((response) => setCategorias(response.data))
 								.catch((error) => console.error(error));
 							e.target.reset();
@@ -130,9 +130,9 @@ function TorneosAdminClubs({ club, user }) {
 								onClick={async () => {
 									if (!window.confirm('¿Seguro que deseas eliminar esta categoria?')) return;
 									try {
-										await axios.delete(`https://golf-backend-production-ad4e.up.railway.app//categorias/${cat.id}`);
+										await axios.delete(`https://golf-backend-production-ad4e.up.railway.app/categorias/${cat.id}`);
 										await axios
-											.get(`https://golf-backend-production-ad4e.up.railway.app//categorias?club=${club.id}`)
+											.get(`https://golf-backend-production-ad4e.up.railway.app/categorias?club=${club.id}`)
 											.then((response) => setCategorias(response.data))
 											.catch((error) => console.error(error));
 									} catch (error) {
@@ -175,7 +175,7 @@ function TorneosAdminClubs({ club, user }) {
 								const valor = insc ? e.target.valor.value : null;
 								const finalizado = 0;
 								try {
-									const response = await axios.post('https://golf-backend-production-ad4e.up.railway.app//torneos', {
+									const response = await axios.post('https://golf-backend-production-ad4e.up.railway.app/torneos', {
 										nombre,
 										fech_ini,
 										fech_fin,
@@ -192,7 +192,7 @@ function TorneosAdminClubs({ club, user }) {
 									// Cargar cada categoría seleccionada a la tabla categorias_torneo
 									await Promise.all(
 										categorias.map((nombre) =>
-											axios.post('https://golf-backend-production-ad4e.up.railway.app//categorias_torneo', {
+											axios.post('https://golf-backend-production-ad4e.up.railway.app/categorias_torneo', {
 												nombre,
 												torneo_id: torneoId
 											})
@@ -204,7 +204,7 @@ function TorneosAdminClubs({ club, user }) {
 									setFechFin('');
 									setSelectedCategorias([]);
 									await axios
-										.get('https://golf-backend-production-ad4e.up.railway.app//torneos?tipo=proximos')
+										.get('https://golf-backend-production-ad4e.up.railway.app/torneos?tipo=proximos')
 										.then((response) => setTorneosProximos(response.data))
 										.catch((error) => console.error(error));
 								} catch (error) {
@@ -370,7 +370,7 @@ function TorneosAdminClubs({ club, user }) {
 								const editado = new Date().toLocaleDateString();
 								const valor = inscEdit ? e.target.valor.value : null;
 								try {
-									await axios.put(`https://golf-backend-production-ad4e.up.railway.app//torneos/${datosEdit.id}`, {
+									await axios.put(`https://golf-backend-production-ad4e.up.railway.app/torneos/${datosEdit.id}`, {
 										nombre,
 										fech_ini,
 										fech_fin,
@@ -381,22 +381,22 @@ function TorneosAdminClubs({ club, user }) {
 										editado
 									});
 									// Eliminar categorías_torneo asociadas
-									await axios.delete(`https://golf-backend-production-ad4e.up.railway.app//categorias_torneo/torneo/${datosEdit.id}`);
+									await axios.delete(`https://golf-backend-production-ad4e.up.railway.app/categorias_torneo/torneo/${datosEdit.id}`);
 									// Crear nuevas categorías_torneo
 									await Promise.all(
 										categorias.map((nombre) =>
-											axios.post('https://golf-backend-production-ad4e.up.railway.app//categorias_torneo', {
+											axios.post('https://golf-backend-production-ad4e.up.railway.app/categorias_torneo', {
 												nombre,
 												torneo_id: datosEdit.id
 											})
 										)
 									);
 									await axios
-										.get('https://golf-backend-production-ad4e.up.railway.app//torneos?tipo=proximos')
+										.get('https://golf-backend-production-ad4e.up.railway.app/torneos?tipo=proximos')
 										.then((response) => setTorneosProximos(response.data))
 										.catch((error) => console.error(error));
 									await axios
-										.get('https://golf-backend-production-ad4e.up.railway.app//torneos?tipo=antiguos')
+										.get('https://golf-backend-production-ad4e.up.railway.app/torneos?tipo=antiguos')
 										.then((response) => setTorneosAntiguos(response.data))
 										.catch((error) => console.error(error));
 									document.getElementById('form_edit_torneo').reset();

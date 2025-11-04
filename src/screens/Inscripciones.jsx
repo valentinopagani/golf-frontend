@@ -35,7 +35,7 @@ function Inscripciones() {
 		});
 
 		axios
-			.get('https://golf-backend-production-ad4e.up.railway.app//torneos?tipo=inscripciones')
+			.get('https://golf-backend-production-ad4e.up.railway.app/torneos?tipo=inscripciones')
 			.then((response) => setTorneos(response.data))
 			.catch((error) => console.error(error));
 	}, []);
@@ -60,7 +60,7 @@ function Inscripciones() {
 
 	const createPreference = async (torneo) => {
 		try {
-			const response = await axios.post('https://golf-backend-production-ad4e.up.railway.app//create_preference', {
+			const response = await axios.post('https://golf-backend-production-ad4e.up.railway.app/create_preference', {
 				title: `Inscripcion a ${torneo.nombre}`,
 				description: `El torneo se llevará a cabo en ${torneo.nombreClubVinculo}, inicia el ${torneo.fech_ini !== torneo.fech_fin ? torneo.fech_ini + ' al ' + torneo.fech_fin : torneo.fech_ini}`,
 				price: torneo.valor,
