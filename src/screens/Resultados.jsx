@@ -17,19 +17,19 @@ const Resultados = memo(function Resultados() {
 
 	useEffect(() => {
 		axios
-			.get('http://localhost:3001/torneos?tipo=dosmeses')
+			.get('https://golf-backend-production-ad4e.up.railway.app//torneos?tipo=dosmeses')
 			.then((response) => setTorneosShow(response.data))
 			.catch((error) => console.error(error));
 
 		axios
-			.get('http://localhost:3001/inscriptos')
+			.get('https://golf-backend-production-ad4e.up.railway.app//inscriptos')
 			.then((response) => setInscriptos(response.data))
 			.catch((error) => console.error(error));
 	}, []);
 
 	useEffect(() => {
 		axios
-			.get(`http://localhost:3001/torneos?nombre=${filtro}`)
+			.get(`https://golf-backend-production-ad4e.up.railway.app//torneos?nombre=${filtro}`)
 			.then((response) => setTorneos(response.data))
 			.catch((error) => console.error(error));
 	}, [filtro]);

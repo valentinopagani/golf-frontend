@@ -22,7 +22,7 @@ function AdminView({ user }) {
 		fetchUsuarios();
 
 		axios
-			.get('http://localhost:3001/clubes')
+			.get('https://golf-backend-production-ad4e.up.railway.app//clubes')
 			.then((response) => setClubes(response.data))
 			.catch((error) => console.error(error));
 	}, []);
@@ -114,7 +114,7 @@ function AdminView({ user }) {
 							const vinculo = e.target.usuarioVinculado.value;
 							const fech_alta = new Date().toLocaleDateString();
 							try {
-								await axios.post('http://localhost:3001/clubes', { nombre, logo, direccion, telefono, contacto, email, vinculo, fech_alta });
+								await axios.post('https://golf-backend-production-ad4e.up.railway.app//clubes', { nombre, logo, direccion, telefono, contacto, email, vinculo, fech_alta });
 							} catch (error) {
 								console.error('estas errado pa', error);
 							}

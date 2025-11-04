@@ -6,7 +6,7 @@ function TorneosAdmin({ torneo, club }) {
 	async function eliminarTorneo() {
 		if (!window.confirm('¿Seguro que deseas eliminar este torneo?')) return;
 		try {
-			await axios.delete(`http://localhost:3001/torneos/${torneo.id}`);
+			await axios.delete(`https://golf-backend-production-ad4e.up.railway.app//torneos/${torneo.id}`);
 			window.alert('Torneo eliminado correctamente');
 			window.location.reload();
 		} catch (error) {
@@ -62,7 +62,7 @@ function TorneosAdmin({ torneo, club }) {
 					color='primary'
 					onClick={async () => {
 						try {
-							await axios.put(`http://localhost:3001/torneos/${torneo.id}/reabrir`, { finalizado: 0 });
+							await axios.put(`https://golf-backend-production-ad4e.up.railway.app//torneos/${torneo.id}/reabrir`, { finalizado: 0 });
 							alert('Torneo reabierto correctamente');
 						} catch (error) {
 							alert('Error al reabrir torneo');

@@ -21,7 +21,7 @@ function AdminClubs({ user }) {
 
 	useEffect(() => {
 		axios
-			.get(`http://localhost:3001/clubes?vinculo=${userId}`)
+			.get(`https://golf-backend-production-ad4e.up.railway.app//clubes?vinculo=${userId}`)
 			.then((response) => setClubes(response.data))
 			.catch((error) => console.error(error));
 	}, [userId]);
