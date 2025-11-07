@@ -283,7 +283,7 @@ function TorneosAdminClubs({ club, user }) {
 					<h3>Torneos proximos:</h3>
 					<div className='torneos'>
 						{torneosProximos
-							.filter((torneo) => torneo.clubVinculo === club.id && torneo.fech_ini.split('/').reverse().join('/') >= actualDate)
+							.filter((torneo) => torneo.clubVinculo === club.id)
 							.sort((a, b) => new Date(a.fech_ini.split('/').reverse().join('-')) - new Date(b.fech_ini.split('/').reverse().join('-')))
 							.map((torneo) => (
 								<div key={torneo.id} className='torneo_adm'>
@@ -305,7 +305,7 @@ function TorneosAdminClubs({ club, user }) {
 			</div>
 
 			<div className='torneos_all'>
-				{torneosAntiguos.filter((torneo) => torneo.clubVinculo === club.id).length === 0 ? (
+				{torneosAntiguos.length === 0 ? (
 					<h3>Los torneos pasados se visualizarán aquí...</h3>
 				) : (
 					<div id='torneos'>
@@ -314,13 +314,12 @@ function TorneosAdminClubs({ club, user }) {
 						<input type='text' placeholder='Filtrar por nombre de torneo:' value={filterName} onChange={(e) => setFilterName(e.target.value)} autoComplete='off' />
 						<FaSearch />
 						<div className='torneos'>
-							{filteredTorneos.filter((torneo) => torneo.clubVinculo === club.id).length === 0 ? (
+							{filteredTorneos.length === 0 ? (
 								<Typography variant='h3' sx={{ mt: 12, mb: 12 }}>
 									No se encontró ningun torneo con ese nombre...
 								</Typography>
 							) : (
 								filteredTorneos
-									.filter((torneo) => torneo.clubVinculo === club.id)
 									.sort((a, b) => new Date(b.fech_ini.split('/').reverse().join('-')) - new Date(a.fech_ini.split('/').reverse().join('-')))
 									.map((torneo) => (
 										<div key={torneo.id} onDoubleClick={() => handleTorneoClick(torneo)} className='torneo_adm'>
