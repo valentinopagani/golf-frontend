@@ -64,7 +64,8 @@ function Inscripciones() {
 				title: `Inscripcion a ${torneo.nombre}`,
 				description: `El torneo se llevará a cabo en ${torneo.nombreClubVinculo}, inicia el ${torneo.fech_ini !== torneo.fech_fin ? torneo.fech_ini + ' al ' + torneo.fech_fin : torneo.fech_ini}`,
 				price: torneo.valor,
-				formulario: formulario
+				formulario: formulario,
+				credentials: 'include'
 			});
 			const { id } = response.data;
 			return id;
