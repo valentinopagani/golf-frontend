@@ -36,7 +36,7 @@ function TorneosAdminClubs({ club, user }) {
 			.catch((error) => console.error(error));
 
 		axios
-			.get('https://golf-backend-production-ad4e.up.railway.app/torneos?tipo=antiguos')
+			.get(`https://golf-backend-production-ad4e.up.railway.app/torneos?tipo=antiguos&clubVinculo=${club.id}`)
 			.then((response) => setTorneosAntiguos(response.data))
 			.catch((error) => console.error(error));
 
