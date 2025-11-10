@@ -11,7 +11,7 @@ function TorneosResultados({ torneo }) {
 
 	useEffect(() => {
 		axios
-			.get(`https://golf-backend-production-ad4e.up.railway.app/inscriptos?torneo=${torneo.id}`)
+			.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneo=${torneo.id}`)
 			.then((response) => setJugadores(response.data))
 			.catch((error) => console.error(error));
 	}, [torneo.id]);

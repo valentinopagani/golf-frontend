@@ -15,7 +15,7 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaS
 
 	useEffect(() => {
 		axios
-			.get(`https://golf-backend-production-ad4e.up.railway.app/jugadoresFiltrados/${torneo.id}`)
+			.get(`${process.env.REACT_APP_BACKEND_URL}/jugadoresFiltrados/${torneo.id}`)
 			.then((response) => setJugadoresFiltrados(response.data))
 			.catch((error) => console.error(error));
 	}, [torneo.id]);

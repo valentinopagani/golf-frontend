@@ -12,7 +12,7 @@ function EstadisticasJugador() {
 
 	useEffect(() => {
 		axios
-			.get(`https://golf-backend-production-ad4e.up.railway.app/jugadores?nombreDni=${filtro}`)
+			.get(`${process.env.REACT_APP_BACKEND_URL}/jugadores?nombreDni=${filtro}`)
 			.then((response) => setJugadores(response.data))
 			.catch((error) => console.error(error));
 	}, [filtro]);

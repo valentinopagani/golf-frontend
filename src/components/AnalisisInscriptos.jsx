@@ -25,7 +25,7 @@ function AnalisisInscriptos({ club }) {
 
 	useEffect(() => {
 		axios
-			.get(`https://golf-backend-production-ad4e.up.railway.app/estadisticas/inscriptosStats?club=${encodeURIComponent(JSON.stringify(club))}&fechaMin=${fechaMin}&fechaMax=${fechaMax}`)
+			.get(`${process.env.REACT_APP_BACKEND_URL}/estadisticas/inscriptosStats?club=${encodeURIComponent(JSON.stringify(club))}&fechaMin=${fechaMin}&fechaMax=${fechaMax}`)
 			.then((response) => setCategoryStats(response.data))
 			.catch((error) => console.error(error));
 	}, [fechaMin, fechaMax, club]);

@@ -12,12 +12,12 @@ function Home() {
 
 	useEffect(() => {
 		axios
-			.get('https://golf-backend-production-ad4e.up.railway.app/clubes')
+			.get(`${process.env.REACT_APP_BACKEND_URL}/clubes`)
 			.then((response) => setClubes(response.data))
 			.catch((error) => console.error(error));
 
 		axios
-			.get('https://golf-backend-production-ad4e.up.railway.app/torneos?tipo=proximos')
+			.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=proximos`)
 			.then((response) => setTorneos(response.data))
 			.catch((error) => console.error(error));
 	}, []);

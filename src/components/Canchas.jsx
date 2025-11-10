@@ -12,7 +12,7 @@ function Canchas({ club }) {
 
 	useEffect(() => {
 		axios
-			.get(`https://golf-backend-production-ad4e.up.railway.app/canchas?idClub=${club.id}`)
+			.get(`${process.env.REACT_APP_BACKEND_URL}/canchas?idClub=${club.id}`)
 			.then((response) => setCanchas(response.data))
 			.catch((error) => console.error(error));
 	}, [club.id]);
@@ -20,12 +20,12 @@ function Canchas({ club }) {
 	async function addHoyos(nuevosHoyos, canchaId) {
 		try {
 			const parCancha = Object.values(nuevosHoyos).reduce((acc, hoyo) => acc + hoyo.par, 0);
-			await axios.put(`https://golf-backend-production-ad4e.up.railway.app/canchas/${canchaId}/hoyos`, {
+			await axios.put(`${process.env.REACT_APP_BACKEND_URL}/canchas/${canchaId}/hoyos`, {
 				hoyos: nuevosHoyos,
 				parCancha: parCancha
 			});
 			await axios
-				.get(`https://golf-backend-production-ad4e.up.railway.app/canchas?idClub=${club.id}`)
+				.get(`${process.env.REACT_APP_BACKEND_URL}/canchas?idClub=${club.id}`)
 				.then((response) => setCanchas(response.data))
 				.catch((error) => console.error(error));
 		} catch (error) {
@@ -107,9 +107,9 @@ function Canchas({ club }) {
 							const cant_hoyos = parseInt(e.target[1].value);
 							const clubVinculo = club.id;
 							try {
-								await axios.post('https://golf-backend-production-ad4e.up.railway.app/canchas', { nombre, cant_hoyos, clubVinculo });
+								await axios.post(`${process.env.REACT_APP_BACKEND_URL}/canchas`, { nombre, cant_hoyos, clubVinculo });
 								await axios
-									.get(`https://golf-backend-production-ad4e.up.railway.app/canchas?idClub=${club.id}`)
+									.get(`${process.env.REACT_APP_BACKEND_URL}/canchas?idClub=${club.id}`)
 									.then((response) => setCanchas(response.data))
 									.catch((error) => console.error(error));
 								e.target.reset();
@@ -147,9 +147,9 @@ function Canchas({ club }) {
 												onClick={async () => {
 													if (!window.confirm(`¿Seguro que deseas eliminar cancha ${cancha.nombre}?`)) return;
 													try {
-														await axios.delete(`https://golf-backend-production-ad4e.up.railway.app/canchas/${cancha.id}`);
+														await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/canchas/${cancha.id}`);
 														await axios
-															.get(`https://golf-backend-production-ad4e.up.railway.app/canchas?idClub=${club.id}`)
+															.get(`${process.env.REACT_APP_BACKEND_URL}/canchas?idClub=${club.id}`)
 															.then((response) => setCanchas(response.data))
 															.catch((error) => console.error(error));
 														alert('Cancha eliminada correctamente!');
@@ -212,11 +212,11 @@ function Canchas({ club }) {
 							onSubmit={async (e) => {
 								e.preventDefault();
 								try {
-									await axios.put(`https://golf-backend-production-ad4e.up.railway.app/canchas/${canchaToEdit.id}/hoyos`, {
+									await axios.put(`${process.env.REACT_APP_BACKEND_URL}/canchas/${canchaToEdit.id}/hoyos`, {
 										hoyos: editHoyos,
 										parCancha: Object.values(editHoyos).reduce((acc, hoyo) => acc + Number(hoyo.par), 0)
 									});
-									const response = await axios.get(`https://golf-backend-production-ad4e.up.railway.app/canchas?idClub=${club.id}`);
+									const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/canchas?idClub=${club.id}`);
 									setCanchas(response.data);
 									alert('Cancha actualizada!');
 									setEditModalOpen(false);

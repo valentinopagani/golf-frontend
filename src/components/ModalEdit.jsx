@@ -52,12 +52,12 @@ function ModalEdit({ jugadorDatos, setJugadoresTorneo, idsTorneosAdmin, setIsOpe
 			.reduce((acc, key) => acc + (updatedScores[key] || 0), 0);
 
 		try {
-			await axios.put('https://golf-backend-production-ad4e.up.railway.app/inscriptos/score', {
+			await axios.put(`${process.env.REACT_APP_BACKEND_URL}/inscriptos/score`, {
 				id: jugadorDatos.id,
 				scores: updatedScores,
 				totalScore
 			});
-			const response = await axios.get(`https://golf-backend-production-ad4e.up.railway.app/inscriptos?torneos=${idsTorneosAdmin.join(',')}`);
+			const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`);
 			setJugadoresTorneo(response.data);
 			setIsOpen(false);
 			alert('Scores actualizados!');
