@@ -16,7 +16,18 @@
 	width: 50px;
 }
 
+.css-z77o6z-MuiButtonBase-root-MuiIconButton-root {
+	padding: 0 !important;
+}
+
 @media (max-width: 900px) {
+
+	.MuiContainer-root,
+	.MuiContainer-maxWidthXl,
+	.css-hhdjsd-MuiContainer-root {
+		height: 64px;
+	}
+
 	.nav_logo {
 		width: 45px;
 		margin-top: 4px;
