@@ -4,6 +4,7 @@ import { GiGolfFlag } from 'react-icons/gi';
 import logo from '../components/logo.png';
 import TorneosHome from '../components/TorneosHome';
 import { Link } from 'react-router-dom';
+import { compareAsc, parse } from 'date-fns';
 import axios from 'axios';
 
 function Home() {
@@ -66,7 +67,7 @@ function Home() {
 								</Paper>
 							) : (
 								torneos
-									// .sort((a, b) => compareAsc(parse(a.fech_ini, 'dd/MM/yyyy', new Date()), parse(b.fech_ini, 'dd/MM/yyyy', new Date())))
+									.sort((a, b) => compareAsc(parse(a.fech_ini, 'dd/MM/yyyy', new Date()), parse(b.fech_ini, 'dd/MM/yyyy', new Date())))
 									.map((torneo) => {
 										const club = clubes.find((club) => club.id === torneo.clubVinculo);
 										return (
