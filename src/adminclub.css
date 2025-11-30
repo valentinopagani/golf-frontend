@@ -710,3 +710,39 @@ th {
 		width: 90vw;
 	}
 }
+
+@media (max-width: 900px) {
+
+	.MuiToolbar-root,
+	.MuiToolbar-regular,
+	.css-1u9o2lj-MuiToolbar-root {
+		margin-top: 2px;
+	}
+
+	.jugadores_torneo {
+		width: 90vw;
+		padding: 10px;
+	}
+
+	.jugadores_torneo_header {
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.jugadores_torneo_header span {
+		order: 1;
+	}
+
+	.jugadores_torneo_header button {
+		order: 2;
+	}
+
+	.jugadores_torneo_header select {
+		order: 3;
+	}
+
+	.jugadores_torneo_header button,
+	.jugadores_torneo_header select {
+		width: 100%;
+	}
+}
