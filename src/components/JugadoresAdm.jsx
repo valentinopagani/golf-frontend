@@ -34,8 +34,8 @@ function JugadoresAdm({ club }) {
 				}}
 			>
 				<input type='text' placeholder='🔎 Buscar por Apellido y Nombre o DNI:' id='inpfiltro' style={{ width: '350px', padding: '7px 5px' }} required />
-				<Button type='submit' variant='outlined' size='medium'>
-					Buscar 🏌🏻‍♂️
+				<Button type='submit' variant='contained' color='inherit' size='medium'>
+					🏌🏻‍♂️🔍
 				</Button>
 				{bandera && (
 					<span
@@ -45,7 +45,7 @@ function JugadoresAdm({ club }) {
 							setFiltro('');
 						}}
 					>
-						Limpiar filtro
+						Limpiar
 					</span>
 				)}
 			</form>
