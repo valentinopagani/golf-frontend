@@ -2,7 +2,7 @@ import { Button, Paper, Typography } from '@mui/material';
 import { parse, subMonths } from 'date-fns';
 import axios from 'axios';
 
-function TorneosAdmin({ torneo, club }) {
+function TorneosAdmin({ torneo, club, onUpdate }) {
 	async function eliminarTorneo() {
 		if (!window.confirm('¿Seguro que deseas eliminar este torneo?')) return;
 		try {
@@ -52,7 +52,7 @@ function TorneosAdmin({ torneo, club }) {
 			<Typography sx={{ fontSize: 15 }}>
 				<b>Descripcion:</b> {torneo.descripcion}
 			</Typography>
-			{torneo.valor !== 0 && <Typography sx={{ fontSize: 16, fontWeight: 'bold' }}>Valor inscripción: ${torneo.valor}</Typography>}
+			{torneo.valor !== 0 && <Typography sx={{ fontSize: 16, fontWeight: 'bold' }}>Valor de inscripción: ${torneo.valor}</Typography>}
 			<Button sx={{ p: 0, fontWeight: 'bold', mr: 2 }} color='error' onClick={eliminarTorneo} title='Eliminar de forma permanente'>
 				Eliminar
 			</Button>
@@ -63,6 +63,9 @@ function TorneosAdmin({ torneo, club }) {
 					onClick={async () => {
 						try {
 							await axios.put(`${process.env.REACT_APP_BACKEND_URL}/torneos/${torneo.id}/reabrir`, { finalizado: 0 });
+							if (typeof onUpdate === 'function') {
+								onUpdate();
+							}
 							alert('Torneo reabierto correctamente');
 						} catch (error) {
 							alert('Error al reabrir torneo');
