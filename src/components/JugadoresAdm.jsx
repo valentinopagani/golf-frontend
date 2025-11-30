@@ -23,32 +23,34 @@ function JugadoresAdm({ club }) {
 			<h3 style={{ textAlign: 'center', fontStyle: 'italic' }}>{club.nombre}</h3>
 			<h2>MODIFICÁ LOS DATOS DE TUS JUGADORES</h2>
 
-			<form
-				style={{ margin: '40px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}
-				autoComplete='off'
-				onSubmit={(e) => {
-					e.preventDefault();
-					setFiltro(e.target.inpfiltro.value.toLowerCase());
-					setBandera(true);
-					e.target.reset();
-				}}
-			>
-				<input type='text' placeholder='🔎 Buscar por Apellido y Nombre o DNI:' id='inpfiltro' style={{ width: '350px', padding: '7px 5px' }} required />
-				<Button type='submit' variant='contained' color='inherit' size='medium'>
-					🏌🏻‍♂️🔍
-				</Button>
-				{bandera && (
-					<span
-						style={{ cursor: 'pointer' }}
-						onClick={() => {
-							setBandera(false);
-							setFiltro('');
-						}}
-					>
-						Limpiar
-					</span>
-				)}
-			</form>
+			<div className='estadisticas'>
+				<form
+					style={{ margin: '40px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}
+					autoComplete='off'
+					onSubmit={(e) => {
+						e.preventDefault();
+						setFiltro(e.target.inpfiltro.value.toLowerCase());
+						setBandera(true);
+						e.target.reset();
+					}}
+				>
+					<input type='text' placeholder='🔎 Buscar por Apellido y Nombre o DNI:' id='inpfiltro' style={{ width: '350px', padding: '7px 5px' }} required />
+					<Button type='submit' variant='contained' color='inherit' size='medium'>
+						🏌🏻‍♂️🔍
+					</Button>
+					{bandera && (
+						<span
+							style={{ cursor: 'pointer' }}
+							onClick={() => {
+								setBandera(false);
+								setFiltro('');
+							}}
+						>
+							Limpiar
+						</span>
+					)}
+				</form>
+			</div>
 
 			<div style={{ width: '90%', margin: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
 				{bandera &&
