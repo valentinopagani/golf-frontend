@@ -17,7 +17,7 @@ const Resultados = memo(function Resultados() {
 
 	useEffect(() => {
 		axios
-			.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=dosmeses`)
+			.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=cincomeses`)
 			.then((response) => setTorneosShow(response.data))
 			.catch((error) => console.error(error));
 
@@ -72,12 +72,12 @@ const Resultados = memo(function Resultados() {
 						}}
 					>
 						<input type='text' placeholder='🔎 Buscar por Nombre de Torneo:' id='inpfiltro' style={{ width: '350px', padding: '7px 5px' }} required />
-						<Button type='submit' variant='outlined' size='medium'>
-							Buscar 🔍
+						<Button type='submit' variant='contained' color='inherit' size='medium'>
+							🔍
 						</Button>
 						{bandera && (
 							<span onClick={() => setBandera(false)} style={{ cursor: 'pointer' }}>
-								Limpiar filtro
+								Limpiar
 							</span>
 						)}
 					</form>
