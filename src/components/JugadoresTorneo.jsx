@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Modal from './Modal';
 import ModalEdit from './ModalEdit';
 import { MdEdit } from 'react-icons/md';
@@ -37,13 +37,13 @@ function JugadoresTorneo({ club }) {
 			.catch((error) => console.error(error));
 	}, [club.id]);
 
-	const idsTorneosAdmin = torneos.map((t) => t.id);
+	const idsTorneosAdmin = useMemo(() => torneos.map((t) => t.id), [torneos]);
 	useEffect(() => {
 		axios
 			.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
 			.then((response) => setJugadoresTorneo(response.data))
 			.catch((error) => console.error(error));
-	}, [torneos, idsTorneosAdmin]);
+	}, [idsTorneosAdmin]);
 
 	useEffect(() => {
 		setFilteredTorneo(torneos.find((torneo) => torneo.id === filterTorneo));
@@ -84,7 +84,7 @@ function JugadoresTorneo({ club }) {
 			if (!window.confirm('¿Deseas cerrar este torneo?')) return;
 			await axios.put(`${process.env.REACT_APP_BACKEND_URL}/torneos/${torneoId}/finalizar`, { finalizado: 1 });
 			await axios
-				.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=inscripcionesadmin`)
+				.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=inscripcionesadmin&clubVinculo=${club.id}`)
 				.then((response) => setTorneos(response.data))
 				.catch((error) => console.error(error));
 		} catch (error) {
@@ -249,6 +249,7 @@ function JugadoresTorneo({ club }) {
 										<tbody>
 											{torneo.jugadores
 												.filter((jugador) => jugador.categoria === categoria)
+												.sort((a, b) => a.nombre > b.nombre)
 												.map((jugador) => (
 													<tr key={jugador.dni}>
 														<td>{jugador.dni}</td>
