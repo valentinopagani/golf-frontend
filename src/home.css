@@ -468,6 +468,11 @@ footer .logo_footer {
 		height: 200px !important;
 	}
 
+	.estadisticas {
+		display: flex;
+		justify-content: center;
+	}
+
 	.estadisticas form {
 		width: 300px;
 		margin: auto;
