@@ -7,7 +7,7 @@ import axios from 'axios';
 
 const ModalEst = lazy(() => import('./ModalEst'));
 
-const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaSelect, jugadores, setModal, user }) {
+const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaSelect, setModal, user }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [jugadoresFiltrados, setJugadoresFiltrados] = useState([]);
 	const [jugadorDatos, setJugadorDatos] = useState([]);
