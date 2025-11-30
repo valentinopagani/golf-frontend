@@ -20,7 +20,6 @@ function TorneosAdminClubs({ club, user }) {
 	const [modal, setModal] = useState(false);
 	const [editModal, setEditModal] = useState(false);
 	const [datosEdit, setDatosEdit] = useState([]);
-	const [jugadoresTorneos, setJugadoresTorneos] = useState([]);
 	const [insc, setInsc] = useState(false);
 	const [inscEdit, setInscEdit] = useState(false);
 
@@ -44,12 +43,19 @@ function TorneosAdminClubs({ club, user }) {
 			.get(`${process.env.REACT_APP_BACKEND_URL}/categorias?club=${club.id}`)
 			.then((response) => setCategorias(response.data))
 			.catch((error) => console.error(error));
-
-		axios
-			.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?clubReg=${club.id}`)
-			.then((response) => setJugadoresTorneos(response.data))
-			.catch((error) => console.error(error));
 	}, [club.id]);
+
+	const fetchTorneos = async () => {
+		try {
+			const responseProximos = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=proximos`);
+			const responseAntiguos = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=antiguos&clubVinculo=${club.id}`);
+
+			setTorneosProximos(responseProximos.data);
+			setTorneosAntiguos(responseAntiguos.data);
+		} catch (error) {
+			console.error('Error al recargar torneos:', error);
+		}
+	};
 
 	// SELECCIONAR CATEGORIAS
 	const handleCheckboxChange = (event) => {
@@ -275,7 +281,7 @@ function TorneosAdminClubs({ club, user }) {
 							.sort((a, b) => new Date(a.fech_ini.split('/').reverse().join('-')) - new Date(b.fech_ini.split('/').reverse().join('-')))
 							.map((torneo) => (
 								<div key={torneo.id} className='torneo_adm'>
-									<TorneosAdmin torneo={torneo} club={club} />
+									<TorneosAdmin torneo={torneo} club={club} onUpdate={fetchTorneos} />
 									{torneo.finalizado === 0 && (
 										<IconButton
 											className='edit_bt'
@@ -311,7 +317,7 @@ function TorneosAdminClubs({ club, user }) {
 									.sort((a, b) => new Date(b.fech_ini.split('/').reverse().join('-')) - new Date(a.fech_ini.split('/').reverse().join('-')))
 									.map((torneo) => (
 										<div key={torneo.id} onDoubleClick={() => handleTorneoClick(torneo)} className='torneo_adm'>
-											<TorneosAdmin torneo={torneo} club={club} />
+											<TorneosAdmin torneo={torneo} club={club} onUpdate={fetchTorneos} />
 											{torneo.finalizado === 0 && (
 												<IconButton
 													className='edit_bt'
@@ -330,7 +336,7 @@ function TorneosAdminClubs({ club, user }) {
 				)}
 			</div>
 
-			{modal && <EstadisticasTorneo torneo={torneoPass} jugadores={jugadoresTorneos} setModal={setModal} user={user} />}
+			{modal && <EstadisticasTorneo torneo={torneoPass} setModal={setModal} user={user} />}
 
 			{editModal && (
 				<div className='modal'>
@@ -378,14 +384,7 @@ function TorneosAdminClubs({ club, user }) {
 											})
 										)
 									);
-									await axios
-										.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=proximos`)
-										.then((response) => setTorneosProximos(response.data))
-										.catch((error) => console.error(error));
-									await axios
-										.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=antiguos`)
-										.then((response) => setTorneosAntiguos(response.data))
-										.catch((error) => console.error(error));
+									await fetchTorneos();
 									document.getElementById('form_edit_torneo').reset();
 									setFechIni('');
 									setFechFin('');
