@@ -1,8 +1,9 @@
 import { useEffect, useState, lazy, memo } from 'react';
+import { useForm } from 'react-hook-form';
 import { Button, Paper } from '@mui/material';
 import { parse, compareDesc } from 'date-fns';
-import axios from 'axios';
 import EstadisticasTorneo from '../components/EstadisticasTorneo';
+import axios from 'axios';
 
 const TorneosResultados = lazy(() => import('../components/TorneosResultados'));
 
@@ -34,6 +35,13 @@ const Resultados = memo(function Resultados() {
 			.catch((error) => console.error(error));
 	}, [filtro]);
 
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors }
+	} = useForm();
+
 	const handleTorneoClick = async (torneo) => {
 		await setTorneoPass(torneo);
 		setModal(true);
@@ -64,32 +72,45 @@ const Resultados = memo(function Resultados() {
 					<form
 						style={{ display: 'flex', alignItems: 'center', gap: 10 }}
 						autoComplete='off'
-						onSubmit={(e) => {
-							e.preventDefault();
-							setFiltro(e.target.inpfiltro.value.toLowerCase());
-							setBandera(true);
-							e.target.reset();
-						}}
+						onSubmit={handleSubmit((data) => {
+							const value = (data.inpfiltro || '').trim();
+							if (value.length !== 0) {
+								setFiltro(value.toLowerCase());
+								setBandera(true);
+							}
+							reset();
+						})}
 					>
-						<input type='text' placeholder='🔎 Buscar por Nombre de Torneo:' id='inpfiltro' style={{ width: '350px', padding: '7px 5px' }} required />
+						<input
+							type='text'
+							placeholder='🔎 Buscar por Nombre de Torneo:'
+							{...register('inpfiltro', {
+								required: true,
+								minLength: { value: 3, message: 'Mínimo 3 caracteres' },
+								pattern: { value: /^[a-zA-Z0-9 ]+$/, message: 'Caracteres inválidos' }
+							})}
+							style={{ width: '350px', padding: '7px 5px' }}
+						/>
 						<Button type='submit' variant='contained' color='inherit' size='medium'>
 							🔍
 						</Button>
 						{bandera && (
-							<span onClick={() => setBandera(false)} style={{ cursor: 'pointer' }}>
+							<span onClick={() => setBandera(false)} style={{ cursor: 'pointer', marginLeft: 10 }}>
 								Limpiar
 							</span>
 						)}
 					</form>
+
+					{errors.inpfiltro && <span style={{ color: 'red' }}>{errors.inpfiltro.message}</span>}
+
 					<div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
-						{bandera &&
-							torneos
-								.filter((torneo) => torneo.nombre.toLowerCase().includes(filtro))
-								.map((torneo) => (
+						{bandera && torneos.length !== 0
+							? torneos.map((torneo) => (
 									<Paper key={torneo.id} elevation={2} sx={{ padding: 2, cursor: 'pointer' }} onClick={() => handleTorneoClick(torneo)}>
 										{torneo.nombre + ' ' + torneo.fech_ini}
 									</Paper>
-								))}
+							  ))
+							: bandera && torneos.length === 0 && <span>No se encontraron resultados para {filtro}...</span>}
 					</div>
 				</div>
 			</div>
