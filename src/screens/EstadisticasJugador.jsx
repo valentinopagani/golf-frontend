@@ -31,8 +31,8 @@ function EstadisticasJugador() {
 				<h2>Observá todas tus estadísticas y resultados.</h2>
 			</div>
 
+			<h2 style={{ textAlign: 'start', fontSize: '24px' }}>🏌🏻‍♂️ Buscar Jugadores:</h2>
 			<div className='estadisticas'>
-				<h2 style={{ textAlign: 'start', fontSize: '24px' }}>🏌🏻‍♂️ Buscar Jugadores:</h2>
 				<form
 					style={{ display: 'flex', alignItems: 'center', gap: 10 }}
 					autoComplete='off'
