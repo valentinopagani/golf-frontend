@@ -232,7 +232,7 @@ function JugadoresTorneo({ club }) {
 						Club de pertenencia: <input type='text' id='club_per' placeholder='club asociado' />
 					</label>
 				</div>
-				<a href={'https://www.vistagolf.com.ar/handicap/DiferencialesArg.asp?strCampo=Campo1&strValor=' + filterJugadoresDni} target='_blank' rel='noreferrer' style={{ color: 'blue' }}>
+				<a href={'https://www.vistagolf.com.ar/handicap/DiferencialesArg.asp?strCampo=Campo1&strValor=' + filterJugadoresDni !== null ? filterJugadoresDni : filteredJugadores[0]?.dni} target='_blank' rel='noreferrer' style={{ color: 'blue' }}>
 					Verificar HDC
 				</a>
 				<button type='submit'>Inscribir +</button>
