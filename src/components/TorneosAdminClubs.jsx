@@ -20,7 +20,6 @@ function TorneosAdminClubs({ club, user }) {
 	const [modal, setModal] = useState(false);
 	const [editModal, setEditModal] = useState(false);
 	const [datosEdit, setDatosEdit] = useState([]);
-	const [jugadoresTorneos, setJugadoresTorneos] = useState([]);
 	const [insc, setInsc] = useState(false);
 	const [inscEdit, setInscEdit] = useState(false);
 
@@ -44,12 +43,19 @@ function TorneosAdminClubs({ club, user }) {
 			.get(`${process.env.REACT_APP_BACKEND_URL}/categorias?club=${club.id}`)
 			.then((response) => setCategorias(response.data))
 			.catch((error) => console.error(error));
-
-		axios
-			.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?clubReg=${club.id}`)
-			.then((response) => setJugadoresTorneos(response.data))
-			.catch((error) => console.error(error));
 	}, [club.id]);
+
+	const fetchTorneos = async () => {
+		try {
+			const responseProximos = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=proximos`);
+			const responseAntiguos = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=antiguos&clubVinculo=${club.id}`);
+
+			setTorneosProximos(responseProximos.data);
+			setTorneosAntiguos(responseAntiguos.data);
+		} catch (error) {
+			console.error('Error al recargar torneos:', error);
+		}
+	};
 
 	// SELECCIONAR CATEGORIAS
 	const handleCheckboxChange = (event) => {
@@ -85,12 +91,13 @@ function TorneosAdminClubs({ club, user }) {
 			<h2 id='nuevo_torneo'>ADMINISTRÁ TUS TORNEOS</h2>
 
 			<div className='nueva_categoria'>
-				<h3>Añadir una nueva Categoria:</h3>
+				<h3>Añadir una nueva Categoría:</h3>
 				<form
 					autoComplete='off'
 					onSubmit={async (e) => {
 						e.preventDefault();
-						const nombre = e.target.cat_nombre.value;
+						const nom = e.target.cat_nombre.value;
+						const nombre = nom.charAt(0).toUpperCase() + nom.slice(1);
 						const vinculo = club.id;
 						try {
 							await axios.post(`${process.env.REACT_APP_BACKEND_URL}/categorias`, { nombre, vinculo });
@@ -100,12 +107,12 @@ function TorneosAdminClubs({ club, user }) {
 								.catch((error) => console.error(error));
 							e.target.reset();
 						} catch (error) {
-							console.error('estas errado pa', error);
+							console.error('error al añadir categoria', error);
 						}
 					}}
 					id='form_cat'
 				>
-					<input type='text' id='cat_nombre' placeholder='nombre de categoria:' required />
+					<input type='text' id='cat_nombre' placeholder='nombre de categoría:' required />
 					<button type='submit'>Crear</button>
 				</form>
 				<div style={{ display: 'flex', flexWrap: 'wrap', gap: 15, marginTop: 10 }}>
@@ -156,7 +163,8 @@ function TorneosAdminClubs({ club, user }) {
 								const cancha = e.target.cancha_juego.value;
 								const rondas = parseInt(e.target.rondas.value);
 								const categorias = selectedCategorias;
-								const descripcion = e.target.descripcion_tor.value;
+								const desc = e.target.descripcion_tor.value;
+								const descripcion = desc !== null && desc.charAt(0).toUpperCase() + desc.slice(1);
 								const clubVinculo = club.id;
 								const nombreClubVinculo = club.nombre;
 								const fech_alta = new Date().toLocaleDateString();
@@ -194,6 +202,10 @@ function TorneosAdminClubs({ club, user }) {
 									await axios
 										.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=proximos`)
 										.then((response) => setTorneosProximos(response.data))
+										.catch((error) => console.error(error));
+									await axios
+										.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=antiguos&clubVinculo=${club.id}`)
+										.then((response) => setTorneosAntiguos(response.data))
 										.catch((error) => console.error(error));
 								} catch (error) {
 									alert('Algo ha salido mal');
@@ -242,7 +254,7 @@ function TorneosAdminClubs({ club, user }) {
 									))}
 								</FormGroup>
 							</div>
-							<textarea id='descripcion_tor' placeholder='Añade una descripcion:' />
+							<textarea id='descripcion_tor' placeholder='Añade una descripción:' />
 
 							<h3>+ Inscripciones Web</h3>
 							<hr />
@@ -256,7 +268,7 @@ function TorneosAdminClubs({ club, user }) {
 							{insc && (
 								<div>
 									<label>Valor de inscripción:</label>
-									<input type='number' id='valor' min={1000} placeholder='$' required />
+									<input type='number' id='valor' placeholder='$' required />
 								</div>
 							)}
 
@@ -268,14 +280,14 @@ function TorneosAdminClubs({ club, user }) {
 				</div>
 
 				<div className='torneos_list'>
-					<h3>Torneos proximos:</h3>
+					<h3>Próximos torneos:</h3>
 					<div className='torneos'>
 						{torneosProximos
 							.filter((torneo) => torneo.clubVinculo === club.id)
 							.sort((a, b) => new Date(a.fech_ini.split('/').reverse().join('-')) - new Date(b.fech_ini.split('/').reverse().join('-')))
 							.map((torneo) => (
-								<div key={torneo.id} className='torneo_adm'>
-									<TorneosAdmin torneo={torneo} club={club} />
+								<div key={torneo.id} className='torneo_adm' onDoubleClick={() => handleTorneoClick(torneo)}>
+									<TorneosAdmin torneo={torneo} club={club} onUpdate={fetchTorneos} />
 									{torneo.finalizado === 0 && (
 										<IconButton
 											className='edit_bt'
@@ -311,7 +323,7 @@ function TorneosAdminClubs({ club, user }) {
 									.sort((a, b) => new Date(b.fech_ini.split('/').reverse().join('-')) - new Date(a.fech_ini.split('/').reverse().join('-')))
 									.map((torneo) => (
 										<div key={torneo.id} onDoubleClick={() => handleTorneoClick(torneo)} className='torneo_adm'>
-											<TorneosAdmin torneo={torneo} club={club} />
+											<TorneosAdmin torneo={torneo} club={club} onUpdate={fetchTorneos} />
 											{torneo.finalizado === 0 && (
 												<IconButton
 													className='edit_bt'
@@ -330,7 +342,7 @@ function TorneosAdminClubs({ club, user }) {
 				)}
 			</div>
 
-			{modal && <EstadisticasTorneo torneo={torneoPass} jugadores={jugadoresTorneos} setModal={setModal} user={user} />}
+			{modal && <EstadisticasTorneo torneo={torneoPass} setModal={setModal} user={user} />}
 
 			{editModal && (
 				<div className='modal'>
@@ -378,14 +390,7 @@ function TorneosAdminClubs({ club, user }) {
 											})
 										)
 									);
-									await axios
-										.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=proximos`)
-										.then((response) => setTorneosProximos(response.data))
-										.catch((error) => console.error(error));
-									await axios
-										.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=antiguos`)
-										.then((response) => setTorneosAntiguos(response.data))
-										.catch((error) => console.error(error));
+									await fetchTorneos();
 									document.getElementById('form_edit_torneo').reset();
 									setFechIni('');
 									setFechFin('');
@@ -450,7 +455,7 @@ function TorneosAdminClubs({ club, user }) {
 									))}
 								</FormGroup>
 							</div>
-							<textarea id='descripcion_tor' placeholder='Añade una descripcion:' defaultValue={datosEdit.descripcion} />
+							<textarea id='descripcion_tor' placeholder='Añade una descripción:' defaultValue={datosEdit.descripcion} />
 							<div>
 								<label>Permitir inscripciones web:</label>
 								<select onChange={() => setInscEdit(!inscEdit)} defaultValue={inscEdit}>
@@ -461,7 +466,7 @@ function TorneosAdminClubs({ club, user }) {
 							{inscEdit && (
 								<div>
 									<label>Valor de inscripción:</label>
-									<input type='number' id='valor' min={1000} placeholder='$' required defaultValue={datosEdit.valor} />
+									<input type='number' id='valor' placeholder='$' required defaultValue={datosEdit.valor} />
 								</div>
 							)}
 							<div className='edit_bts'>

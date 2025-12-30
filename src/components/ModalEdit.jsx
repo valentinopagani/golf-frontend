@@ -16,8 +16,8 @@ function ModalEdit({ jugadorDatos, setJugadoresTorneo, idsTorneosAdmin, setIsOpe
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const updatedScores = { ...scores };
-		const rondas = Object.keys(jugadorDatos.scores).filter((key) => key.match(/^ronda\d+_hoyo1$/)).length;
-		const hoyos = Object.keys(jugadorDatos.scores).filter((key) => key.startsWith('ronda1_hoyo')).length;
+		const rondas = Object.keys(jugadorDatos.scores).filter((key) => key.match(/^ronda\d+_hoyo1$/)).length; // cant de rondas
+		const hoyos = Object.keys(jugadorDatos.scores).filter((key) => key.startsWith('ronda1_hoyo')).length; // cant de hoyos
 
 		for (let i = 1; i <= rondas; i++) {
 			let idaSum = 0,
@@ -51,11 +51,14 @@ function ModalEdit({ jugadorDatos, setJugadoresTorneo, idsTorneosAdmin, setIsOpe
 			.filter((key) => key.match(/^ronda\d+$/))
 			.reduce((acc, key) => acc + (updatedScores[key] || 0), 0);
 
+		const nuevoHcp = e.target.nuevoHcp.value;
+
 		try {
 			await axios.put(`${process.env.REACT_APP_BACKEND_URL}/inscriptos/score`, {
 				id: jugadorDatos.id,
 				scores: updatedScores,
-				totalScore
+				totalScore,
+				nuevoHcp
 			});
 			const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`);
 			setJugadoresTorneo(response.data);
@@ -70,14 +73,17 @@ function ModalEdit({ jugadorDatos, setJugadoresTorneo, idsTorneosAdmin, setIsOpe
 	return (
 		<div className='modal_edit'>
 			<div className='modal_edit_cont'>
-				<h2>{jugadorDatos.dni + ' - ' + jugadorDatos.nombre}</h2>
+				<h2>{jugadorDatos.dni + ' - ' + jugadorDatos.nombre + ' (HDC ' + jugadorDatos.handicap + ')'}</h2>
 				<form onSubmit={handleSubmit}>
+					<label style={{ fontSize: '22px' }}>
+						Editar HCP: <input type='number' defaultValue={jugadorDatos.handicap} name='nuevoHcp' required />
+					</label>
 					<div>
 						{Object.entries(scores)
 							.filter(([key]) => key.includes('hoyo'))
 							.map(([key, value]) => (
 								<label key={key}>
-									{'R' + key[5] + '.Hoyo ' + key.substring(11)}: <input type='number' value={value} onChange={(e) => handleInputChange(e, key)} placeholder={key} />
+									{'R' + key[5] + '.Hoyo ' + key.substring(11)}: <input type='number' value={value} onChange={(e) => handleInputChange(e, key)} required />
 								</label>
 							))}
 					</div>

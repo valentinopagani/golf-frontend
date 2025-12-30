@@ -53,7 +53,7 @@ function Canchas({ club }) {
 					</select>
 					<span>distancia:</span>
 					<input type='number' min='0' step='0.01' placeholder='yardas:' className='yrds' />
-					<span>dificultad:</span>
+					<span>dif. (HCP):</span>
 					<input type='number' min='0' step='0.01' className='yrds' />
 					<hr />
 				</div>
@@ -173,7 +173,7 @@ function Canchas({ club }) {
 										<tr>
 											<th></th>
 											{Object.keys(cancha.hoyos).map((e, index) => (
-												<th>H {index + 1}</th>
+												<th key={index}>H {index + 1}</th>
 											))}
 										</tr>
 									</thead>
@@ -191,7 +191,7 @@ function Canchas({ club }) {
 											))}
 										</tr>
 										<tr>
-											<th>Dificultad</th>
+											<th>Dif. (HCP)</th>
 											{Object.values(cancha.hoyos).map((hoyo) => (
 												<td key={hoyo}>{hoyo.dificultad || '-'}</td>
 											))}
@@ -256,7 +256,7 @@ function Canchas({ club }) {
 										}
 										style={{ width: 70 }}
 									/>
-									<span> Dificultad: </span>
+									<span> Dif. (HCP): </span>
 									<input
 										type='number'
 										min={0}

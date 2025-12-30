@@ -11,11 +11,12 @@ import firebaseApp from '../firebase/firebase';
 import { getAuth, signOut } from 'firebase/auth';
 import Typography from '@mui/material/Typography';
 import { TbGolfOff } from 'react-icons/tb';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 const auth = getAuth(firebaseApp);
 
 function NavBarAdmin() {
 	const [anchorElNav, setAnchorElNav] = useState(null);
+	const navigate = useNavigate();
 
 	const handleOpenNavMenu = (event) => {
 		setAnchorElNav(event.currentTarget);
@@ -115,7 +116,17 @@ function NavBarAdmin() {
 						</Link>
 					</Box>
 					<Box sx={{ flexGrow: 0 }}>
-						<IconButton onClick={() => signOut(auth)} title='Cerrar Sesion'>
+						<IconButton
+							onClick={async () => {
+								try {
+									await signOut(auth);
+									navigate('/', { replace: true });
+								} catch (err) {
+									console.error('Error al cerrar sesion: ', err);
+								}
+							}}
+							title='Cerrar Sesion'
+						>
 							<TbGolfOff color='white' fontSize='30' />
 						</IconButton>
 					</Box>

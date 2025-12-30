@@ -92,7 +92,7 @@ function AdminView({ user }) {
 
 					<h2>Usuarios existentes:</h2>
 					{usuarios.map((usuario) => (
-						<div>
+						<div key={usuario.id}>
 							<h3>{usuario.id}</h3>
 							<span>email: {usuario.email}</span>
 							<br />
@@ -141,7 +141,7 @@ function AdminView({ user }) {
 					<input type='text' placeholder='Filtrar por nombre de club' value={filterName} onChange={(e) => setFilterName(e.target.value)} autoComplete='off' />
 
 					{filteredClubes.map((club) => (
-						<div>
+						<div key={club.id}>
 							<h3>{club.nombre}</h3>
 							<span>id: {club.id}</span> <br />
 							<img src={club.logo} alt='logo del club' />

@@ -2,16 +2,18 @@ import { useState, lazy, memo, useEffect } from 'react';
 import { IconButton } from '@mui/material';
 import { PiMicrosoftExcelLogoFill } from 'react-icons/pi';
 import { IoCloseCircleSharp } from 'react-icons/io5';
+import { TbWorldDownload } from 'react-icons/tb';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
 
 const ModalEst = lazy(() => import('./ModalEst'));
 
-const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaSelect, jugadores, setModal, user }) {
+const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaSelect, setModal, user }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [jugadoresFiltrados, setJugadoresFiltrados] = useState([]);
 	const [jugadorDatos, setJugadorDatos] = useState([]);
 	const [selectedCategoria, setSelectedCategoria] = useState(categoriaSelect || 'Todas');
+	const [comprobantes, setComprobantes] = useState([]);
 
 	useEffect(() => {
 		axios
@@ -19,6 +21,14 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaS
 			.then((response) => setJugadoresFiltrados(response.data))
 			.catch((error) => console.error(error));
 	}, [torneo.id]);
+
+	useEffect(() => {
+		if (!user) return;
+		axios
+			.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?comprobantesTorneo=${torneo.id}`)
+			.then((response) => setComprobantes(response.data))
+			.catch((error) => console.error(error));
+	}, [user, torneo.id]);
 
 	async function handleJugadorClick(jugador) {
 		await setJugadorDatos(jugador);
@@ -33,8 +43,8 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaS
 				if (torneo.rondas === 1) {
 					return {
 						'POS.': index + 1,
-						DNI: jugador.dni,
-						'APELLIDO Y NOMBRE': jugador.nombre,
+						MATRÍCULA: jugador.dni,
+						JUGADOR: jugador.nombre,
 						CLUB: jugador.clubSocio,
 						HDC: jugador.handicap,
 						IDA: jugador.scores['ronda1_ida'],
@@ -45,8 +55,8 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaS
 				} else {
 					return {
 						'POS.': index + 1,
-						DNI: jugador.dni,
-						'APELLIDO Y NOMBRE': jugador.nombre,
+						MATRÍCULA: jugador.dni,
+						JUGADOR: jugador.nombre,
 						CLUB: jugador.clubSocio,
 						HDC: jugador.handicap,
 						TOTAL: jugador.totalScore,
@@ -82,14 +92,72 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaS
 		XLSX.writeFile(workbook, `Resultados ${torneo.nombre} ${torneo.fech_ini}.xlsx`);
 	};
 
+	const exportComprobantesToExcel = () => {
+		const workbook = XLSX.utils.book_new();
+
+		const data = comprobantes.map((item, index) => ({
+			'#': index + 1,
+			'NRO. COMPROBANTE': item.comprobante,
+			JUGADOR: item.nombre,
+			MATRÍCULA: item.dni,
+			'CLUB DE PERTENENCIA': item.clubSocio,
+			'FECHA ALTA': item.fech_alta,
+			TORNEO: torneo.nombre,
+			CATEGORIA: item.categoria,
+			TELEFONO: item.telefono,
+			EMAIL: item.email
+		}));
+
+		// Título arriba
+		const title = [[`COMPROBANTES - TORNEO ${torneo.nombre}`]];
+		const worksheet = XLSX.utils.aoa_to_sheet(title);
+
+		if (!worksheet['!merges']) worksheet['!merges'] = [];
+		worksheet['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 9 } });
+
+		// Datos desde fila 3
+		XLSX.utils.sheet_add_json(worksheet, data, { origin: 'A3', skipHeader: false });
+
+		// Ajuste de columnas
+		worksheet['!cols'] = [
+			{ wpx: 20 }, // #
+			{ wpx: 150 }, // Comprobante
+			{ wpx: 200 }, // Nombre
+			{ wpx: 65 }, // DNI
+			{ wpx: 150 }, // Club
+			{ wpx: 90 }, // Fecha alta
+			{ wpx: 200 }, // Torneo
+			{ wpx: 120 }, // Categoría
+			{ wpx: 90 }, // Teléfono
+			{ wpx: 200 } // Email
+		];
+
+		XLSX.utils.book_append_sheet(workbook, worksheet, 'Comprobantes');
+
+		XLSX.writeFile(workbook, `Comprobantes_Torneo_${torneo.nombre}.xlsx`);
+	};
+
+	const getPosiciones = (jugadorIndex, jugadoresCategoria) => {
+		if (jugadorIndex === 0) return 1;
+		if (jugadorIndex > 0 && jugadoresCategoria[jugadorIndex].scoreNeto !== jugadoresCategoria[jugadorIndex - 1].scoreNeto) {
+			return jugadorIndex + 1;
+		}
+		return jugadoresCategoria[jugadorIndex - 1] ? getPosiciones(jugadorIndex - 1, jugadoresCategoria) : 1;
+	};
+
 	return (
 		<div className='modal'>
 			<div className='modal_cont'>
 				<div className='modal_title'>
 					{user && (
-						<IconButton onClick={exportToExcel} title='Exportar a Excel'>
-							<PiMicrosoftExcelLogoFill fill='green' fontSize='30' />
-						</IconButton>
+						<div>
+							<IconButton onClick={exportToExcel} size='small' title='Exportar tabla a Excel'>
+								<PiMicrosoftExcelLogoFill fill='green' fontSize='30' />
+							</IconButton>
+							<IconButton onClick={exportComprobantesToExcel} size='small' title='Descargar comprobantes de inscripcion online'>
+								<TbWorldDownload fontSize='30' />
+							</IconButton>
+						</div>
 					)}
 					<h3>{torneo.nombre}</h3>
 					<select value={selectedCategoria} onChange={(e) => setSelectedCategoria(e.target.value)}>
@@ -101,6 +169,7 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaS
 						))}
 					</select>
 				</div>
+
 				{jugadoresFiltrados
 					.filter(({ categoria }) => selectedCategoria === 'Todas' || categoria.nombre === selectedCategoria)
 					.map(({ categoria, jugadoresCategoria }) => {
@@ -111,8 +180,8 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaS
 									<thead>
 										<tr>
 											<th className='pos'>Pos.</th>
-											<th className='dni'>DNI</th>
-											<th className='jug'>Apellido y Nombre</th>
+											<th className='dni'>Matrícula</th>
+											<th className='jug'>JUGADOR</th>
 											<th className='club'>Club</th>
 											<th className='hdc'>HDC</th>
 											{torneo.rondas === 1 && <th className='ida'>Ida</th>}
@@ -122,13 +191,9 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaS
 									</thead>
 									<tbody>
 										{jugadoresCategoria.map((jugador, jugadorIndex) => {
-											function getPosiciones() {
-												if (jugadorIndex === 0) return 1;
-												if (jugadorIndex > 0 && jugadoresCategoria[jugadorIndex].scoreNeto !== jugadoresCategoria[jugadorIndex - 1].scoreNeto) return jugadorIndex + 1;
-											}
 											return (
 												<tr key={jugador.dni}>
-													<td>{getPosiciones()}</td>
+													<td>{getPosiciones(jugadorIndex, jugadoresCategoria)}</td>
 													<td onClick={() => handleJugadorClick(jugador)} className='pointer'>
 														{jugador.dni}
 													</td>

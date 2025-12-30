@@ -23,8 +23,8 @@ function UserView() {
 						<Route exact path='/' element={<Home />} />
 						<Route exact path='/login' element={<Login />} />
 						<Route exact path='/resultados' element={<Resultados />} />
-						<Route exact path='/estadisticasjugadores' element={<EstadisticasJugador />} />
-						<Route exact path='/estadisticascanchas' element={<EstadisticasCancha />} />
+						<Route exact path='/estadísticasjugadores' element={<EstadisticasJugador />} />
+						<Route exact path='/estadísticascanchas' element={<EstadisticasCancha />} />
 						<Route exact path='/inscripciones' element={<Inscripciones />} />
 						<Route
 							path='/*'

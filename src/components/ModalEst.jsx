@@ -199,7 +199,7 @@ function ModalEst({ torneo, jugadorDatos, setIsOpen, condicion }) {
 											{rondaIndex + 1 === numRondas && (
 												<tr>
 													<td>SCORE</td>
-													<td>{jugadorDatos.categoria.toLowerCase().includes('gross') || jugadorDatos.categoria.toLowerCase().includes('scratch') ? jugadorDatos.totalScore - datosCancha.parCancha : jugadorDatos.totalScore - jugadorDatos.handicap * torneo.rondas - datosCancha.parCancha}</td>
+													<td>{jugadorDatos.categoria.toLowerCase().includes('gross') || jugadorDatos.categoria.toLowerCase().includes('scratch') ? jugadorDatos.totalScore - datosCancha.parCancha : jugadorDatos.totalScore - jugadorDatos.handicap - datosCancha.parCancha * torneo.rondas}</td>
 												</tr>
 											)}
 										</tbody>

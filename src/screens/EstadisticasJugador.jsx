@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { Button, Paper } from '@mui/material';
 import Historial from '../components/Historial';
 import axios from 'axios';
@@ -17,33 +18,54 @@ function EstadisticasJugador() {
 			.catch((error) => console.error(error));
 	}, [filtro]);
 
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors }
+	} = useForm();
+
 	return (
 		<div className='body_home'>
 			<div className='title_banner'>
 				<h2>Observá todas tus estadísticas y resultados.</h2>
 			</div>
 
+			<h2 style={{ textAlign: 'start', fontSize: '24px' }}>🏌🏻‍♂️ Buscar Jugadores:</h2>
 			<div className='estadisticas'>
 				<form
 					style={{ display: 'flex', alignItems: 'center', gap: 10 }}
 					autoComplete='off'
-					onSubmit={(e) => {
-						e.preventDefault();
-						setFiltro(e.target.inpfiltro.value.toLowerCase());
-						setBandera(true);
-						e.target.reset();
-					}}
+					onSubmit={handleSubmit((data) => {
+						const value = (data.inpfiltro || '').trim();
+						if (value.length !== 0) {
+							setFiltro(value.toLowerCase());
+							setBandera(true);
+						}
+						reset();
+					})}
 				>
-					<input type='text' placeholder='🔎 Buscar por Apellido y Nombre o DNI:' id='inpfiltro' style={{ width: '350px', padding: '7px 5px' }} required />
-					<Button type='submit' variant='outlined' size='medium'>
-						Buscar 🏌🏻‍♂️
+					<input
+						type='text'
+						placeholder='🔎 Buscar por apellido, nombre o matrícula:'
+						{...register('inpfiltro', {
+							required: true,
+							minLength: { value: 3, message: 'Mínimo 3 caracteres' },
+							pattern: { value: /^[a-zA-Z0-9 ]+$/, message: 'Caracteres inválidos' }
+						})}
+						style={{ width: '350px', padding: '7px 5px' }}
+					/>
+					<Button type='submit' variant='contained' color='inherit' size='medium'>
+						🔍
 					</Button>
 					{bandera && (
 						<span onClick={() => setBandera(false)} style={{ cursor: 'pointer' }}>
-							Limpiar filtro
+							Limpiar
 						</span>
 					)}
 				</form>
+
+				{errors.inpfiltro && <span style={{ color: 'red' }}>{errors.inpfiltro.message}</span>}
 
 				<div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
 					{bandera &&

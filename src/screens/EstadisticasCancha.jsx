@@ -41,7 +41,7 @@ function EstadisticasCancha() {
 												<tr>
 													<th></th>
 													<th>Distancia</th>
-													<th>Dificultad</th>
+													<th>Dif. (HCP)</th>
 													<th>Par</th>
 													<th>Par Promedio</th>
 													<th>Águila</th>

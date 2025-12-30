@@ -13,7 +13,7 @@ import logo from '../components/logo.png';
 import { CgMenuLeft } from 'react-icons/cg';
 import { IoGolf } from 'react-icons/io5';
 
-const pages = ['inicio', 'resultados', 'estadisticas jugadores', 'estadisticas canchas'];
+const pages = ['inicio', 'resultados', 'estadísticas jugadores', 'estadísticas canchas'];
 
 function NavBar() {
 	const [anchorElNav, setAnchorElNav] = React.useState(null);

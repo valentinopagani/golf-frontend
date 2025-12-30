@@ -244,7 +244,6 @@
 
 .modal_cont_ins_contain {
 	display: flex;
-	flex-wrap: wrap;
 	gap: 20px;
 }
 
@@ -300,17 +299,12 @@ footer .logo_footer {
 
 @media (max-width: 900px) {
 
-	.MuiContainer-root,
-	.MuiContainer-maxWidthXl,
-	.css-hhdjsd-MuiContainer-root {
-		height: 64px;
-	}
-
 	.banner_home {
 		flex-direction: column;
 		justify-content: center;
 		text-align: center;
 		height: calc(95vh - 64px);
+		background-position: -350px center;
 	}
 
 	.banner_home h1 {
@@ -422,13 +416,13 @@ footer .logo_footer {
 
 	.modal_cont .modal_title h3 {
 		font-size: 18px;
-		/* max-width: 180px; */
+		text-align: start;
 	}
 
 	.modal_cont .modal_title select {
 		width: 80px;
-		padding: 0;
-		font-size: 10px !important;
+		padding: 2px;
+		font-size: 12px !important;
 	}
 
 	.table_container {
@@ -471,6 +465,11 @@ footer .logo_footer {
 		margin-left: auto;
 		width: 200px !important;
 		height: 200px !important;
+	}
+
+	.estadisticas {
+		display: flex;
+		justify-content: center;
 	}
 
 	.estadisticas form {

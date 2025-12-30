@@ -235,7 +235,7 @@
 
 .form_nuevojug {
 	margin: 25px 0;
-	padding: 10px;
+	padding: 10px 15px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -245,15 +245,12 @@
 
 .form_nuevojug div {
 	margin: 5px 0;
-}
-
-.form_nuevojug span {
-	margin-left: 10px;
+	display: flex;
+	gap: 10px;
 }
 
 .form_nuevojug input,
 .form_nuevojug select {
-	margin-right: 10px;
 	background: none;
 	border: none;
 	border: 1px solid #9c9c9c;
@@ -314,7 +311,7 @@
 	margin-bottom: 25px;
 	padding: 20px;
 	border-radius: 12px;
-	background-color: #f0ffe7;
+	background-color: #eaffdeff;
 	box-shadow: 0 10px 18px -12px rgba(0, 0, 0, 0.45);
 }
 
@@ -708,5 +705,41 @@ th {
 
 	.jugadores_torneo {
 		width: 90vw;
+	}
+}
+
+@media (max-width: 900px) {
+
+	.MuiToolbar-root,
+	.MuiToolbar-regular,
+	.css-1u9o2lj-MuiToolbar-root {
+		margin-top: 2px;
+	}
+
+	.jugadores_torneo {
+		width: 90vw;
+		padding: 10px;
+	}
+
+	.jugadores_torneo_header {
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.jugadores_torneo_header span {
+		order: 1;
+	}
+
+	.jugadores_torneo_header button {
+		order: 2;
+	}
+
+	.jugadores_torneo_header select {
+		order: 3;
+	}
+
+	.jugadores_torneo_header button,
+	.jugadores_torneo_header select {
+		width: 100%;
 	}
 }
