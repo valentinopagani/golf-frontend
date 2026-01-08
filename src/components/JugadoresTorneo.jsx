@@ -109,7 +109,7 @@ function JugadoresTorneo({ club }) {
 			<h3 style={{ textAlign: 'center', fontStyle: 'italic' }}>{club.nombre}</h3>
 			<h2>REGISTRÁ LOS JUGADORES</h2>
 
-			<Button variant='contained' color='primary' sx={{ mt: '25px' }} onClick={() => setShowGraf(true)}>
+			<Button variant='contained' color='primary' size='large' sx={{ mt: '25px' }} onClick={() => setShowGraf(true)}>
 				👁 ver gráfico de inscriptos
 			</Button>
 
@@ -173,8 +173,8 @@ function JugadoresTorneo({ club }) {
 						}
 					}
 					e.target.reset();
-					setFilterJugadoresDni('');
-					setFilterJugadoresNombre('');
+					setFilterJugadoresDni(null);
+					setFilterJugadoresNombre(null);
 					setRegistrado(false);
 					setFilterTorneo(0);
 					setFilteredTorneo(null);
@@ -232,7 +232,7 @@ function JugadoresTorneo({ club }) {
 						Club de pertenencia: <input type='text' id='club_per' placeholder='club asociado' />
 					</label>
 				</div>
-				<a href={'https://www.vistagolf.com.ar/handicap/DiferencialesArg.asp?strCampo=Campo1&strValor=' + filterJugadoresDni !== null ? filterJugadoresDni : filteredJugadores[0]?.dni} target='_blank' rel='noreferrer' style={{ color: 'blue' }}>
+				<a href={'https://www.vistagolf.com.ar/handicap/DiferencialesArg.asp?strCampo=Campo1&strValor=' + (filterJugadoresDni !== '' ? filterJugadoresDni : registrado && filteredJugadores[0] && filteredJugadores[0].dni)} target='_blank' rel='noreferrer' style={{ color: 'blue' }}>
 					Verificar HDC
 				</a>
 				<button type='submit'>Inscribir +</button>

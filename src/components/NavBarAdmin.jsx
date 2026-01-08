@@ -9,7 +9,6 @@ import MenuItem from '@mui/material/MenuItem';
 import { CgMenuLeft } from 'react-icons/cg';
 import firebaseApp from '../firebase/firebase';
 import { getAuth, signOut } from 'firebase/auth';
-import Typography from '@mui/material/Typography';
 import { TbGolfOff } from 'react-icons/tb';
 import { Link, useNavigate } from 'react-router-dom';
 const auth = getAuth(firebaseApp);
@@ -29,18 +28,6 @@ function NavBarAdmin() {
 		<AppBar className='nav' sx={{ backgroundColor: 'green', padding: '0 30px' }}>
 			<Container sx={{ maxWidth: '1600px !important' }}>
 				<Toolbar disableGutters>
-					<Typography
-						noWrap
-						sx={{
-							color: '#ffffab',
-							fontSize: 20,
-							fontWeight: 'bold',
-							mr: 5,
-							display: { xs: 'none', md: 'flex' }
-						}}
-					>
-						Administrador
-					</Typography>
 					<Box
 						sx={{
 							flexGrow: 1,
@@ -91,6 +78,11 @@ function NavBarAdmin() {
 									Mis Canchas
 								</Link>
 							</MenuItem>
+							<MenuItem>
+								<Link to='/administrador/info' className='nav_a'>
+									Info
+								</Link>
+							</MenuItem>
 						</Menu>
 					</Box>
 					<Box
@@ -113,6 +105,9 @@ function NavBarAdmin() {
 						</Link>
 						<Link to='/administrador/miscanchas' className='nav_a'>
 							Mis Canchas
+						</Link>
+						<Link to='/administrador/info' className='nav_a'>
+							Info
 						</Link>
 					</Box>
 					<Box sx={{ flexGrow: 0 }}>

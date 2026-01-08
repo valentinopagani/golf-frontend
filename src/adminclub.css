@@ -352,6 +352,14 @@ table {
 	font-size: 14px;
 }
 
+table tr:nth-child(even) {
+	background-color: #dfdfdf;
+}
+
+table tr:hover {
+	background-color: #caebca;
+}
+
 .jugadores_torneo table caption label {
 	color: #0b52bb;
 }
@@ -359,9 +367,9 @@ table {
 caption {
 	background-color: #caebca;
 	font-weight: bold;
-	border: 1px solid black;
+	/* border: 1px solid black; */
 	padding: 4px 0;
-	border-bottom: none;
+	/* border-bottom: none; */
 	position: relative;
 }
 
@@ -377,7 +385,7 @@ caption button {
 
 th,
 td {
-	border: 1px solid black;
+	border-top: 1px solid white;
 	padding: 4px 8px;
 	text-align: left;
 }

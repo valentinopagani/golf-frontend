@@ -166,6 +166,15 @@ ul li button {
 	margin: 0 10px;
 }
 
+.table_reservas {
+	border-color: #aaa !important;
+}
+
+.table_reservas button {
+	background: none;
+	border: none
+}
+
 @media (max-width: 900px) {
 	.nav_a {
 		color: black;

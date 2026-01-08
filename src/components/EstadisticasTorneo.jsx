@@ -193,7 +193,7 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaS
 										{jugadoresCategoria.map((jugador, jugadorIndex) => {
 											return (
 												<tr key={jugador.dni}>
-													<td>{getPosiciones(jugadorIndex, jugadoresCategoria)}</td>
+													<td>{jugadorIndex + 1}</td>
 													<td onClick={() => handleJugadorClick(jugador)} className='pointer'>
 														{jugador.dni}
 													</td>

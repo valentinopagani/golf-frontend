@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button, Paper, Stack } from '@mui/material';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function JugadoresAdm({ club }) {
 	const [jugadores, setJugadores] = useState([]);
@@ -52,7 +53,7 @@ function JugadoresAdm({ club }) {
 				</form>
 			</div>
 
-			<div style={{ width: '90%', margin: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
+			<div style={{ width: '90%', margin: 'auto', marginBottom: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
 				{bandera &&
 					(jugadores.length === 0 ? (
 						<span>No se encontró resultados para {filtro}...</span>
@@ -72,6 +73,17 @@ function JugadoresAdm({ club }) {
 						))
 					))}
 			</div>
+
+			{club.dias_habilitados && (
+				<div style={{ textAlign: 'center' }}>
+					<h2>OBSERVÁ, MODIFICÁ Y REGISTRÁ LAS RESERVAS EN TU CLUB</h2>
+					<Link to={`/administrador/reservas`}>
+						<Button variant='contained' size='large' style={{ marginTop: '20px' }}>
+							📋 reservas
+						</Button>
+					</Link>
+				</div>
+			)}
 
 			{isOpen && (
 				<div className='modal_edit'>

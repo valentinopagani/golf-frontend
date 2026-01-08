@@ -33,7 +33,7 @@ function Home() {
 					</h1>
 					<p>Precisión e información para un juego perfecto...</p>
 					<Link to='/inscripciones'>Inscripciones</Link>
-					<Link to='/resultados'>Ver Resultados</Link>
+					<Link to='/reservas'>Reservas</Link>
 				</div>
 				<img src={logo} alt='' />
 			</div>

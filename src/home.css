@@ -166,10 +166,6 @@
 	color: white;
 }
 
-.pointer {
-	cursor: pointer;
-}
-
 .tabla_jugador {
 	margin: 0 auto;
 	width: 100%;
@@ -266,6 +262,17 @@
 
 .modal_cont_ins_contain span {
 	display: block;
+}
+
+.form_reserva label {
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.form_reserva label input {
+	flex: 1;
+	box-sizing: border-box;
 }
 
 footer {

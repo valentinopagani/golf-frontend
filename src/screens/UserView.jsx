@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, useParams } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import draw from '../components/undraw_playing-golf_016o.svg';
 import logoProyInfo from '../components/LogoPapiGuille.png';
@@ -11,6 +11,28 @@ const Resultados = lazy(() => import('./Resultados'));
 const EstadisticasJugador = lazy(() => import('./EstadisticasJugador'));
 const EstadisticasCancha = lazy(() => import('./EstadisticasCancha'));
 const Inscripciones = lazy(() => import('./Inscripciones'));
+const Reservas = lazy(() => import('./Reservas'));
+const TablaReservas = lazy(() => import('../components/TablaReservas'));
+
+function TablaReservasWrapper() {
+	const { id, nombre } = useParams();
+	return (
+		<TablaReservas
+			clubId={id}
+			clubNombre={nombre}
+			fecha={
+				new Date()
+					.toLocaleString('en-CA', {
+						timeZone: 'America/Argentina/Buenos_Aires',
+						year: 'numeric',
+						month: '2-digit',
+						day: '2-digit'
+					})
+					.split(',')[0]
+			}
+		/>
+	);
+}
 
 function UserView() {
 	return (
@@ -26,6 +48,8 @@ function UserView() {
 						<Route exact path='/estadísticasjugadores' element={<EstadisticasJugador />} />
 						<Route exact path='/estadísticascanchas' element={<EstadisticasCancha />} />
 						<Route exact path='/inscripciones' element={<Inscripciones />} />
+						<Route exact path='/reservas' element={<Reservas />} />
+						<Route exact path='/reservas/:id/:nombre' element={<TablaReservasWrapper />} />
 						<Route
 							path='/*'
 							element={

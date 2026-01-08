@@ -88,7 +88,7 @@ function TorneosAdminClubs({ club, user }) {
 	return (
 		<div>
 			<h3 style={{ textAlign: 'center', fontStyle: 'italic' }}>{club.nombre}</h3>
-			<h2 id='nuevo_torneo'>ADMINISTRÁ TUS TORNEOS</h2>
+			<h2>ADMINISTRÁ TUS TORNEOS</h2>
 
 			<div className='nueva_categoria'>
 				<h3>Añadir una nueva Categoría:</h3>
