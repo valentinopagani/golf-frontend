@@ -3,7 +3,13 @@ import { Button, IconButton, Typography } from '@mui/material';
 import { IoCloseCircleSharp } from 'react-icons/io5';
 import axios from 'axios';
 
-function Modal({ torneoDatos, jugadorDatos, setJugadoresTorneo, idsTorneosAdmin, setIsOpen }) {
+function Modal({
+	torneoDatos,
+	jugadorDatos,
+	setJugadoresTorneo,
+	idsTorneosAdmin,
+	setIsOpen
+}) {
 	const [scores, setScores] = useState({});
 	const [canchas, setCanchas] = useState([]);
 
@@ -24,7 +30,9 @@ function Modal({ torneoDatos, jugadorDatos, setJugadoresTorneo, idsTorneosAdmin,
 
 	const handleSubmit = async () => {
 		const updatedScores = { ...scores };
-		const canchaSeleccionada = canchas.find((cancha) => cancha.id === torneoDatos.cancha);
+		const canchaSeleccionada = canchas.find(
+			(cancha) => cancha.id === torneoDatos.cancha
+		);
 		const hoyos = canchaSeleccionada ? canchaSeleccionada.cant_hoyos : 0;
 
 		for (let i = 1; i <= torneoDatos.rondas; i++) {
@@ -58,17 +66,26 @@ function Modal({ torneoDatos, jugadorDatos, setJugadoresTorneo, idsTorneosAdmin,
 			updatedScores[`ronda${i}_vuelta`] = vueltaSum;
 			updatedScores[`ronda${i}`] = rondaSum;
 		}
-		const totalScore = Object.values(scores).reduce((acc, score) => acc + score, 0);
+		const totalScore = Object.values(scores).reduce(
+			(acc, score) => acc + score,
+			0
+		);
 		try {
-			await axios.put(`${process.env.REACT_APP_BACKEND_URL}/inscriptos/score`, {
-				id: jugadorDatos.id,
-				scores: updatedScores,
-				totalScore
-			});
+			await axios.put(
+				`${process.env.REACT_APP_BACKEND_URL}/inscriptos/score`,
+				{
+					id: jugadorDatos.id,
+					nuevoHcp: jugadorDatos.handicap,
+					scores: updatedScores,
+					totalScore
+				}
+			);
 			setScores({});
 			setIsOpen(false);
 			await axios
-				.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
+				.get(
+					`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`
+				)
 				.then((response) => setJugadoresTorneo(response.data))
 				.catch((error) => console.error(error));
 		} catch (error) {
@@ -78,7 +95,9 @@ function Modal({ torneoDatos, jugadorDatos, setJugadoresTorneo, idsTorneosAdmin,
 
 	const modalContent = useMemo(() => {
 		const form = [];
-		const canchaSeleccionada = canchas.find((cancha) => cancha.id === torneoDatos.cancha);
+		const canchaSeleccionada = canchas.find(
+			(cancha) => cancha.id === torneoDatos.cancha
+		);
 		const hoyos = canchaSeleccionada ? canchaSeleccionada.cant_hoyos : 0;
 
 		for (let i = 1; i <= torneoDatos.rondas; i++) {
@@ -89,12 +108,26 @@ function Modal({ torneoDatos, jugadorDatos, setJugadoresTorneo, idsTorneosAdmin,
 					</Typography>
 					<span>De ida:</span>
 					{Array.from({ length: hoyos / 2 }, (_, k) => (
-						<input key={`ronda${i}_hoyo${k + 1}`} type='number' placeholder={`Hoyo ${k + 1}`} id={`ronda${i}_hoyo${k + 1}`} onChange={(e) => handleInputChange(e, i, k + 1)} required />
+						<input
+							key={`ronda${i}_hoyo${k + 1}`}
+							type='number'
+							placeholder={`Hoyo ${k + 1}`}
+							id={`ronda${i}_hoyo${k + 1}`}
+							onChange={(e) => handleInputChange(e, i, k + 1)}
+							required
+						/>
 					))}
 					<br />
 					<span>Vuelta:</span>
 					{Array.from({ length: hoyos / 2 }, (_, j) => (
-						<input key={`ronda${i}_hoyo${j + 10}`} type='number' placeholder={`Hoyo ${j + 10}`} id={`ronda${i}_hoyo${j + 10}`} onChange={(e) => handleInputChange(e, i, j + 10)} required />
+						<input
+							key={`ronda${i}_hoyo${j + 10}`}
+							type='number'
+							placeholder={`Hoyo ${j + 10}`}
+							id={`ronda${i}_hoyo${j + 10}`}
+							onChange={(e) => handleInputChange(e, i, j + 10)}
+							required
+						/>
 					))}
 				</div>
 			);
@@ -106,7 +139,9 @@ function Modal({ torneoDatos, jugadorDatos, setJugadoresTorneo, idsTorneosAdmin,
 		<div className='modal'>
 			<div className='modal_cont'>
 				<h4>{torneoDatos.nombre.toUpperCase()}</h4>
-				<h3>{jugadorDatos.dni + ' - ' + jugadorDatos.nombre.toUpperCase()}</h3>
+				<h3>
+					{jugadorDatos.dni + ' - ' + jugadorDatos.nombre.toUpperCase()}
+				</h3>
 				<form
 					onSubmit={(e) => {
 						e.preventDefault();
@@ -118,7 +153,11 @@ function Modal({ torneoDatos, jugadorDatos, setJugadoresTorneo, idsTorneosAdmin,
 						Cargar
 					</Button>
 				</form>
-				<IconButton size='medium' sx={{ position: 'absolute', top: 5, right: 10, color: 'white' }} onClick={() => setIsOpen(false)}>
+				<IconButton
+					size='medium'
+					sx={{ position: 'absolute', top: 5, right: 10, color: 'white' }}
+					onClick={() => setIsOpen(false)}
+				>
 					<IoCloseCircleSharp fontSize='40' />
 				</IconButton>
 			</div>

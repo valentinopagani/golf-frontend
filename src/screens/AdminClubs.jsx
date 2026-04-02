@@ -6,7 +6,7 @@ import JugadoresTorneo from '../components/JugadoresTorneo';
 import JugadoresAdm from '../components/JugadoresAdm';
 import TablaReservas from '../components/TablaReservas';
 import Canchas from '../components/Canchas';
-import Info from './Info';
+import Parametros from './Parametros';
 import axios from 'axios';
 
 function AdminClubs({ user }) {
@@ -51,7 +51,7 @@ function AdminClubs({ user }) {
 						<Route exact path='/administrador/jugadores' element={<JugadoresAdm club={club} />} />
 						<Route exact path='/administrador/reservas' element={<TablaReservas clubId={club.id} clubNombre={club.nombre} fecha={fechaActual} user={userId} />} />
 						<Route exact path='/administrador/miscanchas' element={<Canchas club={club} />} />
-						<Route exact path='/administrador/info' element={<Info club={club} />} />
+						<Route exact path='/administrador/parametros' element={<Parametros club={club} fecha={fechaActual} />} />
 					</Routes>
 				</div>
 			))}

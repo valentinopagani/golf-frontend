@@ -1,12 +1,12 @@
 import { useState, useEffect, Suspense, lazy } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { BrowserRouter as Router } from 'react-router-dom';
+import './firebase/firebase';
 import './App.css';
 import './adminclub.css';
 import './home.css';
-import './firebase/firebase';
-import { BrowserRouter as Router } from 'react-router-dom';
 
-const AdminView = lazy(() => import('./screens/AdminView'));
+const AdminClubs = lazy(() => import('./screens/AdminClubs'));
 const UserView = lazy(() => import('./screens/UserView'));
 
 function App() {
@@ -25,9 +25,7 @@ function App() {
 	useEffect(() => {
 		const checkStylesLoaded = () => {
 			const styles = document.styleSheets;
-			if (styles.length > 0) {
-				setStylesLoaded(true);
-			}
+			if (styles.length) setStylesLoaded(true);
 		};
 
 		checkStylesLoaded();
@@ -46,7 +44,7 @@ function App() {
 	return (
 		<div className='App'>
 			<Router>
-				<Suspense fallback={<div className='loading'>Cargando...</div>}>{user ? <AdminView user={user} /> : <UserView />}</Suspense>
+				<Suspense fallback={<div className='loading'>Cargando...</div>}>{user ? <AdminClubs user={user} /> : <UserView />}</Suspense>
 			</Router>
 		</div>
 	);

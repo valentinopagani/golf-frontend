@@ -79,8 +79,8 @@ function NavBarAdmin() {
 								</Link>
 							</MenuItem>
 							<MenuItem>
-								<Link to='/administrador/info' className='nav_a'>
-									Info
+								<Link to='/administrador/parametros' className='nav_a'>
+									Parámetros
 								</Link>
 							</MenuItem>
 						</Menu>
@@ -106,8 +106,8 @@ function NavBarAdmin() {
 						<Link to='/administrador/miscanchas' className='nav_a'>
 							Mis Canchas
 						</Link>
-						<Link to='/administrador/info' className='nav_a'>
-							Info
+						<Link to='/administrador/parametros' className='nav_a'>
+							Parámetros
 						</Link>
 					</Box>
 					<Box sx={{ flexGrow: 0 }}>

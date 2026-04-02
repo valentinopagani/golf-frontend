@@ -9,10 +9,9 @@ const TorneosResultados = lazy(() => import('../components/TorneosResultados'));
 
 const Resultados = memo(function Resultados() {
 	const [torneosShow, setTorneosShow] = useState([]);
-	const [torneos, setTorneos] = useState([]);
+	const [torneos, setTorneos] = useState(false);
 	const [inscriptos, setInscriptos] = useState([]);
-	const [filtro, setFiltro] = useState('');
-	const [bandera, setBandera] = useState(false);
+	const [filtro, setFiltro] = useState(false);
 	const [torneoPass, setTorneoPass] = useState([]);
 	const [modal, setModal] = useState(false);
 
@@ -29,6 +28,14 @@ const Resultados = memo(function Resultados() {
 	}, []);
 
 	useEffect(() => {
+		if (!filtro) return;
+
+		function normalizeName(s) {
+			return (s || '').trim().replace(/\s+/g, ' ');
+		}
+
+		if (normalizeName(filtro).length < 3 || normalizeName(filtro) === ' ') return;
+
 		axios
 			.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?nombre=${filtro}`)
 			.then((response) => setTorneos(response.data))
@@ -58,11 +65,7 @@ const Resultados = memo(function Resultados() {
 						{torneosShow
 							.sort((a, b) => compareDesc(parse(a.fech_ini, 'dd/MM/yyyy', new Date()), parse(b.fech_ini, 'dd/MM/yyyy', new Date())))
 							.map((torneo) => (
-								<div key={torneo.id}>
-									<div>
-										<TorneosResultados sx={{ m: 0 }} torneo={torneo} />
-									</div>
-								</div>
+								<TorneosResultados sx={{ m: 0 }} torneo={torneo} key={torneo.id} />
 							))}
 					</div>
 				</div>
@@ -76,7 +79,7 @@ const Resultados = memo(function Resultados() {
 							const value = (data.inpfiltro || '').trim();
 							if (value.length !== 0) {
 								setFiltro(value.toLowerCase());
-								setBandera(true);
+								// setBandera(true);
 							}
 							reset();
 						})}
@@ -84,8 +87,8 @@ const Resultados = memo(function Resultados() {
 						<input
 							type='text'
 							placeholder='🔎 Buscar por Nombre de Torneo:'
+							required
 							{...register('inpfiltro', {
-								required: true,
 								minLength: { value: 3, message: 'Mínimo 3 caracteres' },
 								pattern: { value: /^[a-zA-Z0-9 ]+$/, message: 'Caracteres inválidos' }
 							})}
@@ -94,8 +97,14 @@ const Resultados = memo(function Resultados() {
 						<Button type='submit' variant='contained' color='inherit' size='medium'>
 							🔍
 						</Button>
-						{bandera && (
-							<span onClick={() => setBandera(false)} style={{ cursor: 'pointer', marginLeft: 10 }}>
+						{torneos && (
+							<span
+								onClick={() => {
+									setTorneos(false);
+									setFiltro(false);
+								}}
+								style={{ cursor: 'pointer', marginLeft: 10 }}
+							>
 								Limpiar
 							</span>
 						)}
@@ -104,13 +113,13 @@ const Resultados = memo(function Resultados() {
 					{errors.inpfiltro && <span style={{ color: 'red' }}>{errors.inpfiltro.message}</span>}
 
 					<div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
-						{bandera && torneos.length !== 0
+						{torneos.length
 							? torneos.map((torneo) => (
 									<Paper key={torneo.id} elevation={2} sx={{ padding: 2, cursor: 'pointer' }} onClick={() => handleTorneoClick(torneo)}>
 										{torneo.nombre + ' ' + torneo.fech_ini}
 									</Paper>
-							  ))
-							: bandera && torneos.length === 0 && <span>No se encontraron resultados para {filtro}...</span>}
+								))
+							: !torneos.length && filtro && <span>No se encontraron resultados para {filtro}...</span>}
 					</div>
 				</div>
 			</div>

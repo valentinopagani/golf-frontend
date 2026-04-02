@@ -142,7 +142,7 @@ function Canchas({ club }) {
 											<span>{cancha.nombre.toUpperCase()}</span>
 											<FaRegTrashCan
 												size={17}
-												className='pointer'
+												sx={{ cursor: 'pointer' }}
 												title='Eliminar cancha'
 												onClick={async () => {
 													if (!window.confirm(`¿Seguro que deseas eliminar cancha ${cancha.nombre}?`)) return;
@@ -161,7 +161,7 @@ function Canchas({ club }) {
 											/>
 											<FaPenFancy
 												size={17}
-												className='pointer'
+												sx={{ cursor: 'pointer' }}
 												title='Editar datos de cancha'
 												onClick={() => {
 													handleEditClick(cancha);

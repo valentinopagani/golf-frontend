@@ -5,13 +5,20 @@ import Historial from '../components/Historial';
 import axios from 'axios';
 
 function EstadisticasJugador() {
-	const [jugadores, setJugadores] = useState([]);
-	const [filtro, setFiltro] = useState('');
-	const [bandera, setBandera] = useState(false);
+	const [jugadores, setJugadores] = useState(false);
+	const [filtro, setFiltro] = useState(false);
 	const [jugadorPase, setJugadorPase] = useState([]);
 	const [isOpen, setIsOpen] = useState(false);
 
 	useEffect(() => {
+		if (!filtro) return;
+
+		function normalizeName(s) {
+			return (s || '').trim().replace(/\s+/g, ' ');
+		}
+
+		if (normalizeName(filtro).length < 3 || normalizeName(filtro) === ' ') return;
+
 		axios
 			.get(`${process.env.REACT_APP_BACKEND_URL}/jugadores?nombreDni=${filtro}`)
 			.then((response) => setJugadores(response.data))
@@ -28,7 +35,7 @@ function EstadisticasJugador() {
 	return (
 		<div className='body_home'>
 			<div className='title_banner'>
-				<h2>Observá todas tus estadísticas y resultados.</h2>
+				<h2>Observá tus estadísticas y resultados.</h2>
 			</div>
 
 			<h2 style={{ textAlign: 'start', fontSize: '24px' }}>🏌🏻‍♂️ Buscar Jugadores:</h2>
@@ -40,7 +47,6 @@ function EstadisticasJugador() {
 						const value = (data.inpfiltro || '').trim();
 						if (value.length !== 0) {
 							setFiltro(value.toLowerCase());
-							setBandera(true);
 						}
 						reset();
 					})}
@@ -58,8 +64,14 @@ function EstadisticasJugador() {
 					<Button type='submit' variant='contained' color='inherit' size='medium'>
 						🔍
 					</Button>
-					{bandera && (
-						<span onClick={() => setBandera(false)} style={{ cursor: 'pointer' }}>
+					{jugadores && (
+						<span
+							onClick={() => {
+								setJugadores(false);
+								setFiltro(false);
+							}}
+							style={{ cursor: 'pointer' }}
+						>
 							Limpiar
 						</span>
 					)}
@@ -68,11 +80,8 @@ function EstadisticasJugador() {
 				{errors.inpfiltro && <span style={{ color: 'red' }}>{errors.inpfiltro.message}</span>}
 
 				<div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
-					{bandera &&
-						(jugadores.length === 0 ? (
-							<span>No se encontró resultados para {filtro}...</span>
-						) : (
-							jugadores.map((jugador) => (
+					{jugadores.length
+						? jugadores.map((jugador) => (
 								<Paper
 									key={jugador.id}
 									elevation={3}
@@ -85,7 +94,7 @@ function EstadisticasJugador() {
 									{jugador.dni} - {jugador.nombre}
 								</Paper>
 							))
-						))}
+						: !jugadores.length && filtro && <span>No se encontraron resultados para {filtro}...</span>}
 				</div>
 			</div>
 

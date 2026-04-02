@@ -136,7 +136,7 @@ function TorneosAdminClubs({ club, user }) {
 									}
 								}}
 							>
-								x
+								X
 							</span>
 						</Paper>
 					))}
@@ -248,7 +248,7 @@ function TorneosAdminClubs({ club, user }) {
 								<FormGroup onChange={handleCheckboxChange}>
 									{categorias.map((categoria) => (
 										<div key={categoria.id}>
-											<input type='checkbox' value={categoria.nombre} className='pointer' />
+											<input type='checkbox' value={categoria.nombre} style={{ cursor: 'pointer' }} />
 											<label key={categoria.id}> {categoria.nombre}</label>
 										</div>
 									))}
@@ -443,13 +443,7 @@ function TorneosAdminClubs({ club, user }) {
 								<FormGroup onChange={handleCheckboxChange}>
 									{categorias.map((categoria) => (
 										<div key={categoria.id}>
-											<input
-												type='checkbox'
-												value={categoria.nombre}
-												className='pointer'
-												// defaultChecked compara con el array de nombres
-												defaultChecked={selectedCategorias.includes(categoria.nombre)}
-											/>
+											<input type='checkbox' value={categoria.nombre} style={{ cursor: 'pointer' }} defaultChecked={selectedCategorias.includes(categoria.nombre)} />
 											<span> {categoria.nombre}</span>
 										</div>
 									))}

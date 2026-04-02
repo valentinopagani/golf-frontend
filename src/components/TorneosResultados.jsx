@@ -48,16 +48,26 @@ function TorneosResultados({ torneo }) {
 		setModal(true);
 	};
 
-	const renderCategoria = (categoria) => {
+	const renderCategoria = (categoria, idx) => {
 		const podio = getPodio(categoria);
 		return (
-			<Box key={categoria.id} display='flex' flexDirection='column' margin={2} padding={1} borderRadius={1.4} boxShadow='0px 0px 10px 0px rgba(0, 0, 0, 0.2)' onClick={() => handleTorneoClick(torneo, categoria)} className='pointer' sx={{ transition: 'all 0.1s', '&:hover': { scale: 1.01, boxShadow: '0px 0px 15px 0px rgba(0, 0, 0, 0.3)' } }}>
+			<Box
+				key={categoria.id ?? idx} // fallback to index if id missing
+				display='flex'
+				flexDirection='column'
+				margin={2}
+				padding={1}
+				borderRadius={1.4}
+				boxShadow='0px 0px 10px 0px rgba(0, 0, 0, 0.2)'
+				onClick={() => handleTorneoClick(torneo, categoria)}
+				sx={{ cursor: 'pointer', transition: 'all 0.1s', '&:hover': { scale: 1.01, boxShadow: '0px 0px 15px 0px rgba(0, 0, 0, 0.3)' } }}
+			>
 				<Typography variant='span' textAlign='center' fontStyle='italic'>
 					{categoria.nombre}
 				</Typography>
-				{podio.length > 0 &&
-					podio.map((jugador) => (
-						<Typography key={jugador.dni} variant='span' marginLeft={jugador.posicion - 1} color={jugador.posicion === 1 ? '#feb800' : jugador.posicion === 2 ? '#757575' : jugador.posicion === 3 ? '#ca5010' : 'black'}>
+				{podio.length &&
+					podio.map((jugador, jidx) => (
+						<Typography key={jugador.dni ?? `${categoria.id}-${jidx}`} variant='span' marginLeft={jugador.posicion - 1} color={jugador.posicion === 1 ? '#feb800' : jugador.posicion === 2 ? '#757575' : jugador.posicion === 3 ? '#ca5010' : 'black'}>
 							{jugador.posicion === 1 && '🥇 '} {jugador.posicion === 2 && '🥈 '} {jugador.posicion === 3 && '🥉 '}
 							{jugador.nombre}
 						</Typography>
@@ -87,7 +97,7 @@ function TorneosResultados({ torneo }) {
 					</Typography>
 				</Box>
 				<Box width='65%' display='flex' flexWrap='wrap' justifyContent='center' alignItems='center'>
-					{torneo.categorias.map(renderCategoria)}
+					{torneo.categorias.map((cat, idx) => renderCategoria(cat, idx))}
 				</Box>
 			</Paper>
 			{modal && <EstadisticasTorneo torneo={torneoPass} jugadores={jugadores} categoriaSelect={categoriaSelect} setModal={setModal} />}

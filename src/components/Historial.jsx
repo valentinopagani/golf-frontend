@@ -23,7 +23,7 @@ function Historial({ dni }) {
 				<tr key={jugador.id}>
 					<td>{torneo?.fech_ini}</td>
 					<td
-						className='pointer'
+						style={{ cursor: 'pointer' }}
 						onClick={() => {
 							setTorneoDatos(torneo);
 							setJugadorDatos(jugador);

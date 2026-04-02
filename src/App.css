@@ -168,6 +168,8 @@ ul li button {
 
 .table_reservas {
 	border-color: #aaa !important;
+	table-layout: fixed;
+	width: 100%;
 }
 
 .table_reservas button {
