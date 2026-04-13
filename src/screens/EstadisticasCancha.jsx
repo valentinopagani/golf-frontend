@@ -33,7 +33,9 @@ function EstadisticasCancha() {
 						.filter((element) => datos[element].club_id === club.id)
 						.map((element) => (
 							<details key={element}>
-								<summary style={{ cursor: 'pointer', textAlign: 'center', fontSize: 20, margin: '10px 0' }}>CANCHA {datos[element].cancha_nombre.toUpperCase()}</summary>
+								<summary style={{ cursor: 'pointer', textAlign: 'center', fontSize: 20, margin: '10px 0' }}>
+									CANCHA {datos[element].cancha_nombre.toUpperCase()}
+								</summary>
 								<div className='datos_cancha'>
 									<div className='table_container'>
 										<table key={element}>

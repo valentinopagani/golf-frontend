@@ -21,7 +21,21 @@ function Reservas() {
 			<h2>CLUBES CON RESERVAS:</h2>
 			<div className='torneos_home'>
 				{clubes.map((club) => (
-					<Paper key={club.id} sx={{ m: 2, padding: '10px 20px', maxWidth: 500, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px' }} elevation={3} className='paper'>
+					<Paper
+						key={club.id}
+						sx={{
+							m: 2,
+							padding: '10px 20px',
+							maxWidth: 500,
+							borderRadius: 2,
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							gap: '20px'
+						}}
+						elevation={3}
+						className='paper'
+					>
 						<Box sx={{ textAlign: 'center' }}>
 							<img src={club.logo} alt='logo del club' />
 						</Box>

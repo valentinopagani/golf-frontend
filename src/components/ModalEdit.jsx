@@ -2,7 +2,12 @@ import { Button, Stack } from '@mui/material';
 import { useState } from 'react';
 import axios from 'axios';
 
-function ModalEdit({ jugadorDatos, setJugadoresTorneo, idsTorneosAdmin, setIsOpen }) {
+function ModalEdit({
+	jugadorDatos,
+	setJugadoresTorneo,
+	idsTorneosAdmin,
+	setIsOpen
+}) {
 	const [scores, setScores] = useState({ ...jugadorDatos.scores });
 
 	const handleInputChange = (e, key) => {
@@ -16,8 +21,12 @@ function ModalEdit({ jugadorDatos, setJugadoresTorneo, idsTorneosAdmin, setIsOpe
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const updatedScores = { ...scores };
-		const rondas = Object.keys(jugadorDatos.scores).filter((key) => key.match(/^ronda\d+_hoyo1$/)).length; // cant de rondas
-		const hoyos = Object.keys(jugadorDatos.scores).filter((key) => key.startsWith('ronda1_hoyo')).length; // cant de hoyos
+		const rondas = Object.keys(jugadorDatos.scores).filter((key) =>
+			key.match(/^ronda\d+_hoyo1$/)
+		).length; // cant de rondas
+		const hoyos = Object.keys(jugadorDatos.scores).filter((key) =>
+			key.startsWith('ronda1_hoyo')
+		).length; // cant de hoyos
 
 		for (let i = 1; i <= rondas; i++) {
 			let idaSum = 0,
@@ -54,44 +63,77 @@ function ModalEdit({ jugadorDatos, setJugadoresTorneo, idsTorneosAdmin, setIsOpe
 		const nuevoHcp = e.target.nuevoHcp.value;
 
 		try {
-			await axios.put(`${process.env.REACT_APP_BACKEND_URL}/inscriptos/score`, {
-				id: jugadorDatos.id,
-				scores: updatedScores,
-				totalScore,
-				nuevoHcp
-			});
-			const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`);
+			await axios.put(
+				`${process.env.REACT_APP_BACKEND_URL}/inscriptos/score`,
+				{
+					id: jugadorDatos.id,
+					scores: updatedScores,
+					totalScore,
+					nuevoHcp
+				}
+			);
+			const response = await axios.get(
+				`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`
+			);
 			setJugadoresTorneo(response.data);
 			setIsOpen(false);
-			alert('Scores actualizados!');
+			alert('SCORES ACTUALIZADOS CORRECTAMENTE');
 		} catch (error) {
 			console.error('Error al actualizar scores', error);
-			alert('Error al actualizar scores', error);
+			alert('ERROR AL ACTUALIZAR SCORES. INTENTA NUEVAMENTE');
 		}
 	};
 
 	return (
 		<div className='modal_edit'>
 			<div className='modal_edit_cont'>
-				<h2>{jugadorDatos.dni + ' - ' + jugadorDatos.nombre + ' (HDC ' + jugadorDatos.handicap + ')'}</h2>
+				<h2>
+					{jugadorDatos.dni +
+						' - ' +
+						jugadorDatos.nombre +
+						' (HDC ' +
+						jugadorDatos.handicap +
+						')'}
+				</h2>
 				<form onSubmit={handleSubmit}>
 					<label style={{ fontSize: '22px' }}>
-						Editar HCP: <input type='number' defaultValue={jugadorDatos.handicap} name='nuevoHcp' required />
+						Editar HCP:{' '}
+						<input
+							type='number'
+							defaultValue={jugadorDatos.handicap}
+							name='nuevoHcp'
+							required
+						/>
 					</label>
 					<div>
 						{Object.entries(scores)
 							.filter(([key]) => key.includes('hoyo'))
 							.map(([key, value]) => (
 								<label key={key}>
-									{'R' + key[5] + '.Hoyo ' + key.substring(11)}: <input type='number' value={value} onChange={(e) => handleInputChange(e, key)} required />
+									{'R' + key[5] + '.Hoyo ' + key.substring(11)}:{' '}
+									<input
+										type='number'
+										value={value}
+										onChange={(e) => handleInputChange(e, key)}
+										required
+									/>
 								</label>
 							))}
 					</div>
 					<Stack direction='row'>
-						<Button variant='contained' size='small' onClick={() => setIsOpen(false)}>
+						<Button
+							variant='contained'
+							size='small'
+							onClick={() => setIsOpen(false)}
+						>
 							cancelar
 						</Button>
-						<Button variant='contained' size='small' color='success' type='submit'>
+						<Button
+							variant='contained'
+							size='small'
+							color='success'
+							type='submit'
+						>
 							actualizar
 						</Button>
 					</Stack>

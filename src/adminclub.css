@@ -404,7 +404,7 @@ th {
 }
 
 .modal_cont {
-	max-width: 95%;
+	max-width: 88%;
 	max-height: 82vh;
 	padding: 10px 20px;
 	border-radius: 12px;
@@ -711,7 +711,7 @@ th {
 	}
 }
 
-@media (max-width: 900px) {
+@media (max-width: 902px) {
 
 	.MuiToolbar-root,
 	.MuiToolbar-regular,

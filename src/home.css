@@ -220,6 +220,19 @@
 	flex-wrap: wrap
 }
 
+@media (max-width: 902px) {
+	.torneos_ins {
+		padding: 20px;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	.torneos_ins button {
+		margin-top: 15px;
+	}
+
+}
+
 .modal_cont_ins {
 	max-width: 85%;
 	max-height: 83vh;
@@ -236,6 +249,13 @@
 	font-size: 25px;
 	text-align: center;
 	margin-bottom: 10px;
+}
+
+@media (max-width: 902px) {
+	.modal_cont_ins {
+		max-height: 76vh;
+		padding: 10px;
+	}
 }
 
 .modal_cont_ins_contain {
@@ -262,6 +282,12 @@
 
 .modal_cont_ins_contain span {
 	display: block;
+}
+
+@media (max-width: 902px) {
+	.modal_cont_ins_contain {
+		flex-direction: column;
+	}
 }
 
 .form_reserva label {
@@ -295,7 +321,7 @@ footer div {
 footer .draw_player {
 	width: 70px;
 	position: absolute;
-	top: -70px;
+	top: -55px;
 	left: 50px;
 }
 
@@ -304,7 +330,7 @@ footer .logo_footer {
 	margin: 0 15px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 902px) {
 
 	.banner_home {
 		flex-direction: column;

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Modal from './Modal';
 import ModalEdit from './ModalEdit';
 import { MdEdit } from 'react-icons/md';
+import { FaPersonCircleMinus } from 'react-icons/fa6';
 import { FaTrash } from 'react-icons/fa';
 import AnalisisInscriptos from './AnalisisInscriptos';
 import { Alert, Button, IconButton } from '@mui/material';
@@ -27,9 +28,7 @@ function JugadoresTorneo({ club }) {
 
 	useEffect(() => {
 		axios
-			.get(
-				`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=inscripcionesadmin&clubVinculo=${club.id}`
-			)
+			.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=inscripcionesadmin&clubVinculo=${club.id}`)
 			.then((response) => setTorneos(response.data))
 			.catch((error) => console.error(error));
 	}, [club]);
@@ -42,9 +41,7 @@ function JugadoresTorneo({ club }) {
 	const idsTorneosAdmin = useMemo(() => torneos.map((t) => t.id), [torneos]);
 	useEffect(() => {
 		axios
-			.get(
-				`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`
-			)
+			.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
 			.then((response) => setJugadoresTorneo(response.data))
 			.catch((error) => console.error(error));
 	}, [idsTorneosAdmin]);
@@ -59,12 +56,8 @@ function JugadoresTorneo({ club }) {
 
 		const fetchJugador = async () => {
 			try {
-				const response = await axios.get(
-					`${process.env.REACT_APP_BACKEND_URL}/jugadores?dniExacto=${filterJugadoresDni}`
-				);
-				setJugadorRegistrado(
-					response.data.length > 0 ? response.data[0] : false
-				);
+				const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/jugadores?dniExacto=${filterJugadoresDni}`);
+				setJugadorRegistrado(response.data.length > 0 ? response.data[0] : false);
 			} catch (error) {
 				console.error('Error buscando jugadores:', error);
 				setJugadorRegistrado(false);
@@ -84,28 +77,27 @@ function JugadoresTorneo({ club }) {
 	const jugadoresPorTorneo = torneos.reduce((acc, torneo) => {
 		acc[torneo.nombre] = {
 			...torneo,
-			jugadores: jugadoresTorneo.filter(
-				(jugador) => jugador.torneo === torneo.id
-			)
+			jugadores: jugadoresTorneo.filter((jugador) => jugador.torneo === torneo.id)
 		};
 		return acc;
 	}, {});
 
-	async function cerrarTorneo(torneoId) {
+	async function cerrarTorneo(torneo) {
 		try {
+			if (torneo.jugadores.some((jugador) => !jugador.scores && jugador.asistio === 1)) {
+				alert('NO SE PUEDE CERRAR EL TORNEO. DEBES CARGAR LOS SCORES DE TODOS LOS JUGADORES');
+				return;
+			}
+
 			if (!window.confirm('¿Deseas cerrar este torneo?')) return;
-			await axios.put(
-				`${process.env.REACT_APP_BACKEND_URL}/torneos/${torneoId}/finalizar`,
-				{ finalizado: 1 }
-			);
+
+			await axios.put(`${process.env.REACT_APP_BACKEND_URL}/torneos/${torneo.id}/finalizar`, { finalizado: 1 });
 			await axios
-				.get(
-					`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=inscripcionesadmin&clubVinculo=${club.id}`
-				)
+				.get(`${process.env.REACT_APP_BACKEND_URL}/torneos?tipo=inscripcionesadmin&clubVinculo=${club.id}`)
 				.then((response) => setTorneos(response.data))
 				.catch((error) => console.error(error));
 		} catch (error) {
-			alert('Error al cerrar el torneo');
+			alert('ERROR AL CERRAR TORNEO. INTENTA NUEVAMENTE');
 			console.error(error);
 		}
 	}
@@ -117,21 +109,30 @@ function JugadoresTorneo({ club }) {
 		}));
 	};
 
+	const estadisticasPorCategoria = useMemo(() => {
+		const stats = {};
+		jugadoresTorneo.forEach((jugador) => {
+			const torneo = jugador.torneo;
+			const categoria = jugador.categoria;
+			const key = `${torneo}-${categoria}`;
+
+			if (!stats[key]) {
+				stats[key] = { inscriptos: 0, scores: 0, ausentes: 0 };
+			}
+			stats[key].inscriptos++;
+			if (jugador.scores) stats[key].scores++;
+			if (jugador.asistio === 0) stats[key].ausentes++;
+		});
+		return stats;
+	}, [jugadoresTorneo]);
+
 	return (
 		<div className='jugadores_admin'>
-			<h3 style={{ textAlign: 'center', fontStyle: 'italic' }}>
-				{club.nombre}
-			</h3>
+			<h3 style={{ textAlign: 'center', fontStyle: 'italic' }}>{club.nombre}</h3>
 			<h2>REGISTRÁ LOS JUGADORES</h2>
 
-			<Button
-				variant='contained'
-				color='primary'
-				size='large'
-				sx={{ mt: '15px' }}
-				onClick={() => setShowGraf(true)}
-			>
-				👁 ver gráfico de inscriptos
+			<Button variant='contained' color='primary' size='large' sx={{ mt: '15px' }} onClick={() => setShowGraf(true)}>
+				👁 gráfico de inscriptos
 			</Button>
 
 			<form
@@ -147,34 +148,20 @@ function JugadoresTorneo({ club }) {
 						});
 					}
 
-					const dni = jugadorRegistrado
-						? jugadorRegistrado.dni
-						: e.target.dni.value;
-					const rawNombre = jugadorRegistrado
-						? jugadorRegistrado.nombre
-						: e.target.nombre.value;
-					const nombre = normalizeName(
-						capitalizarConRegex(rawNombre.toLowerCase())
-					);
+					const dni = jugadorRegistrado ? jugadorRegistrado.dni : e.target.dni.value;
+					const rawNombre = jugadorRegistrado ? jugadorRegistrado.nombre : e.target.nombre.value;
+					const nombre = normalizeName(capitalizarConRegex(rawNombre.toLowerCase()));
 					const torneo = e.target.torneo.value;
 					const categoria = e.target.categoria.value;
 					const handicap = parseInt(e.target.handicap.value);
 					const clubReg = club.nombre;
-					const clubSocio = jugadorRegistrado
-						? jugadorRegistrado.clubSocio
-						: capitalizarConRegex(e.target.club_per.value.toLowerCase());
+					const clubSocio = jugadorRegistrado ? jugadorRegistrado.clubSocio : capitalizarConRegex(e.target.club_per.value.toLowerCase());
 					const fech_alta = new Date().toLocaleDateString();
 					// Verificar si ya está inscripto en este torneo y misma categoría
 					try {
-						const check = await axios.get(
-							`${process.env.REACT_APP_BACKEND_URL}/inscriptos/check`,
-							{ params: { torneo, dni, categoria } }
-						);
+						const check = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos/check`, { params: { torneo, dni, categoria } });
 						if (check.data && check.data.exists) {
-							setError([
-								1,
-								nombre + ' ya está inscripto en ' + categoria + '.'
-							]);
+							setError([1, nombre + ' ya está inscripto en ' + categoria + '.']);
 							return;
 						} else {
 							setError(false);
@@ -185,23 +172,18 @@ function JugadoresTorneo({ club }) {
 					}
 					if (jugadorRegistrado) {
 						try {
-							await axios.post(
-								`${process.env.REACT_APP_BACKEND_URL}/inscriptos`,
-								{
-									dni,
-									nombre,
-									torneo,
-									categoria,
-									handicap,
-									clubReg,
-									clubSocio,
-									fech_alta
-								}
-							);
+							await axios.post(`${process.env.REACT_APP_BACKEND_URL}/inscriptos`, {
+								dni,
+								nombre,
+								torneo,
+								categoria,
+								handicap,
+								clubReg,
+								clubSocio,
+								fech_alta
+							});
 							await axios
-								.get(
-									`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`
-								)
+								.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
 								.then((response) => setJugadoresTorneo(response.data))
 								.catch((error) => console.error(error));
 
@@ -216,47 +198,33 @@ function JugadoresTorneo({ club }) {
 						const fech_nac = fecha[2] + '/' + fecha[1] + '/' + fecha[0];
 						const sexo = e.target.sexo.value;
 						try {
-							await axios.post(
-								`${process.env.REACT_APP_BACKEND_URL}/jugadores`,
-								{
-									dni,
-									nombre,
-									fech_nac,
-									sexo,
-									clubReg,
-									clubSocio,
-									fech_alta
-								}
-							);
-							await axios.post(
-								`${process.env.REACT_APP_BACKEND_URL}/inscriptos`,
-								{
-									dni,
-									nombre,
-									torneo,
-									categoria,
-									handicap,
-									clubReg,
-									clubSocio,
-									fech_alta
-								}
-							);
+							await axios.post(`${process.env.REACT_APP_BACKEND_URL}/jugadores`, {
+								dni,
+								nombre,
+								fech_nac,
+								sexo,
+								clubReg,
+								clubSocio,
+								fech_alta
+							});
+							await axios.post(`${process.env.REACT_APP_BACKEND_URL}/inscriptos`, {
+								dni,
+								nombre,
+								torneo,
+								categoria,
+								handicap,
+								clubReg,
+								clubSocio,
+								fech_alta
+							});
 							setError([0, 'Se inscribió y registró con éxito.']);
 							await axios
-								.get(
-									`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`
-								)
+								.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
 								.then((response) => setJugadoresTorneo(response.data))
 								.catch((error) => console.error(error));
 						} catch (error) {
-							console.error(
-								'error al registrar inscripto y/o datos personales',
-								error
-							);
-							setError([
-								1,
-								'Error al inscribir o registrar a ' + nombre + '.'
-							]);
+							console.error('error al registrar inscripto y/o datos personales', error);
+							setError([1, 'Error al inscribir o registrar a ' + nombre + '.']);
 							return;
 						}
 					}
@@ -270,11 +238,7 @@ function JugadoresTorneo({ club }) {
 				<div>
 					<label>
 						Torneo:{' '}
-						<select
-							id='torneo'
-							onChange={(e) => setFilterTorneo(parseInt(e.target.value))}
-							required
-						>
+						<select id='torneo' onChange={(e) => setFilterTorneo(parseInt(e.target.value))} required>
 							<option>Elegir...</option>
 							{torneos
 								.filter((torneo) => torneo.clubVinculo === club.id)
@@ -289,9 +253,7 @@ function JugadoresTorneo({ club }) {
 						Categoría:{' '}
 						<select id='categoria' required>
 							{filteredTorneo && filteredTorneo.categorias.length ? (
-								filteredTorneo.categorias.map((categoria, i) => (
-									<option key={i}>{categoria.nombre}</option>
-								))
+								filteredTorneo.categorias.map((categoria, i) => <option key={i}>{categoria.nombre}</option>)
 							) : (
 								<option disabled>Primero elige un torneo</option>
 							)}
@@ -304,9 +266,7 @@ function JugadoresTorneo({ club }) {
 							id='dni'
 							pattern='[0-9]*'
 							maxLength={6}
-							onInput={(e) =>
-								(e.target.value = e.target.value.replace(/[^0-9]/g, ''))
-							}
+							onInput={(e) => (e.target.value = e.target.value.replace(/[^0-9]/g, ''))}
 							onChange={(e) => {
 								setFilterJugadoresDni(e.target.value);
 								if (e.target.value.length !== 6) {
@@ -321,17 +281,10 @@ function JugadoresTorneo({ club }) {
 				{!jugadorRegistrado ? (
 					<div>
 						<label>
-							Nombre:{' '}
-							<input
-								type='text'
-								id='nombre'
-								placeholder='(apellido/s y nombre/s)'
-								required
-							/>
+							Nombre: <input type='text' id='nombre' placeholder='(apellido/s y nombre/s)' autoCapitalize='words' required />
 						</label>
 						<label>
-							Fecha de Nacimiento:{' '}
-							<input type='date' id='fech_nac' required />
+							Fecha de Nacimiento: <input type='date' id='fech_nac' required />
 						</label>
 						<label>
 							Género:{' '}
@@ -344,9 +297,7 @@ function JugadoresTorneo({ club }) {
 					</div>
 				) : (
 					jugadorRegistrado && (
-						<span style={{ color: 'green', margin: '5px' }}>
-							{`Ya tenemos los datos de ${jugadorRegistrado.nombre}, ${jugadorRegistrado.clubSocio}`}
-						</span>
+						<span style={{ color: 'green', margin: '5px' }}>{`Ya tenemos los datos de ${jugadorRegistrado.nombre}, ${jugadorRegistrado.clubSocio}`}</span>
 					)
 				)}
 				<div>
@@ -357,22 +308,14 @@ function JugadoresTorneo({ club }) {
 							id='handicap'
 							pattern='[0-9]*'
 							maxLength={2}
-							onInput={(e) =>
-								(e.target.value = e.target.value.replace(/[^0-9]/g, ''))
-							}
+							onInput={(e) => (e.target.value = e.target.value.replace(/[^0-9]/g, ''))}
 							placeholder='HDC'
 							required
 						/>
 					</label>
 					{!jugadorRegistrado && (
 						<label>
-							Club Asociado:{' '}
-							<input
-								type='text'
-								id='club_per'
-								placeholder='club asociado'
-								required
-							/>
+							Club Asociado: <input type='text' id='club_per' placeholder='club asociado' autoCapitalize='words' required />
 						</label>
 					)}
 				</div>
@@ -380,11 +323,7 @@ function JugadoresTorneo({ club }) {
 				<a
 					href={
 						'https://www.vistagolf.com.ar/handicap/DiferencialesArg.asp?strCampo=Campo1&strValor=' +
-						(filterJugadoresDni !== ''
-							? filterJugadoresDni
-							: jugadorRegistrado
-								? jugadorRegistrado.dni
-								: '')
+						(filterJugadoresDni !== '' ? filterJugadoresDni : jugadorRegistrado ? jugadorRegistrado.dni : '')
 					}
 					target='_blank'
 					rel='noreferrer'
@@ -393,11 +332,7 @@ function JugadoresTorneo({ club }) {
 					Verificar HDC
 				</a>
 
-				{error && (
-					<Alert severity={error[0] === 1 ? 'warning' : 'success'}>
-						{error[1]}
-					</Alert>
-				)}
+				{error && <Alert severity={error[0] === 1 ? 'warning' : 'success'}>{error[1]}</Alert>}
 
 				<button type='submit'>Inscribir +</button>
 			</form>
@@ -406,21 +341,12 @@ function JugadoresTorneo({ club }) {
 				.sort((a, b) => a.localeCompare(b))
 				.map((torneoNombre) => {
 					const torneo = jugadoresPorTorneo[torneoNombre];
-					const categorias = [
-						...new Set(
-							torneo.jugadores.map((jugador) => jugador.categoria)
-						)
-					];
+					const categorias = [...new Set(torneo.jugadores.map((jugador) => jugador.categoria))];
 					const selectedCategoria = filterCategoria[torneo.id] || 'Todas';
 					return (
 						<div key={torneoNombre} className='jugadores_torneo'>
 							<div className='jugadores_torneo_header'>
-								<select
-									value={selectedCategoria}
-									onChange={(e) =>
-										handleCategoriaChange(torneo.id, e.target.value)
-									}
-								>
+								<select value={selectedCategoria} onChange={(e) => handleCategoriaChange(torneo.id, e.target.value)}>
 									<option value='Todas'>Todas las categorías</option>
 									{categorias.map((categoria) => (
 										<option key={categoria} value={categoria}>
@@ -429,74 +355,45 @@ function JugadoresTorneo({ club }) {
 									))}
 								</select>
 								<span>{torneoNombre.toUpperCase()}</span>
-								<button onClick={() => cerrarTorneo(torneo.id)}>
-									Cerrar torneo
-								</button>
+								<button onClick={() => cerrarTorneo(torneo)}>Cerrar torneo</button>
 							</div>
-							{torneo.jugadores.length === 0 && (
-								<p>No hay jugadores inscriptos...</p>
-							)}
+							{torneo.jugadores.length === 0 && <p>No hay jugadores inscriptos...</p>}
 							{categorias
-								.filter(
-									(categoria) =>
-										selectedCategoria === 'Todas' ||
-										categoria === selectedCategoria
-								)
+								.filter((categoria) => selectedCategoria === 'Todas' || categoria === selectedCategoria)
 								.map((categoria) => (
 									<div key={categoria} className='table_container'>
 										<table>
 											<caption>
-												Cat. {categoria.toUpperCase()}
+												Cat. {categoria.toUpperCase()}{' '}
 												<label>
-													{' (' +
-														torneo.jugadores.filter(
-															(jugador) =>
-																jugador.categoria === categoria
-														).length}{' '}
-													inscriptos,{' '}
-													{
-														torneo.jugadores.filter(
-															(jugador) =>
-																jugador.categoria ===
-																	categoria && jugador.scores
-														).length
-													}{' '}
-													scores)
+													| {estadisticasPorCategoria[`${torneo.id}-${categoria}`]?.inscriptos || 0} inscriptos |{' '}
+													{estadisticasPorCategoria[`${torneo.id}-${categoria}`]?.scores || 0} scores |{' '}
+													{estadisticasPorCategoria[`${torneo.id}-${categoria}`]?.ausentes || 0} ausentes |
 												</label>
 											</caption>
 											<thead>
 												<tr>
-													<th>Matrícula</th>
+													<th style={{ width: 0 }}>Matrícula</th>
 													<th>Nombre</th>
 													<th>HCP</th>
 													<th>Club</th>
 													<th>Fecha Inscripción</th>
-													<th>Scores</th>
-													<th />
-													<th />
+													<th style={{ width: 0 }}>Scores</th>
+													<th style={{ width: 0 }} />
+													<th style={{ width: 0 }} />
 												</tr>
 											</thead>
 											<tbody>
 												{torneo.jugadores
-													.filter(
-														(jugador) =>
-															jugador.categoria === categoria
-													)
-													.sort((a, b) =>
-														a.nombre.localeCompare(b.nombre)
-													)
+													.filter((jugador) => jugador.categoria === categoria)
+													.sort((a, b) => a.nombre.localeCompare(b.nombre))
 													.map((jugador) => (
 														<tr
 															key={jugador.dni}
 															style={{
-																backgroundColor:
-																	jugador?.comprobante &&
-																	'#fffec6ff'
+																backgroundColor: jugador?.comprobante && '#fffec6ff'
 															}}
-															title={
-																jugador?.comprobante &&
-																'Jugador inscripto online'
-															}
+															title={jugador?.comprobante && 'Jugador inscripto online'}
 														>
 															<td>{jugador.dni}</td>
 															<td>
@@ -508,15 +405,9 @@ function JugadoresTorneo({ club }) {
 																		}}
 																		title='Ver información de la inscripción online'
 																		onClick={() => {
-																			setJugadorDatos(
-																				jugador
-																			);
-																			setEmailInscripto(
-																				jugador.email
-																			);
-																			setOpenComprobante(
-																				true
-																			);
+																			setJugadorDatos(jugador);
+																			setEmailInscripto(jugador.email);
+																			setOpenComprobante(true);
 																		}}
 																	>
 																		📋
@@ -526,35 +417,57 @@ function JugadoresTorneo({ club }) {
 															<td>{jugador.handicap}</td>
 															<td>{jugador.clubSocio}</td>
 															<td>{jugador.fech_alta}</td>
-															<td>
+															<td style={{ textAlign: 'center' }}>
 																{jugador.scores ? (
 																	<span>✅</span>
 																) : (
-																	<span
-																		onClick={() => {
-																			setJugadorDatos(
-																				jugador
-																			);
-																			setTorneoDatos(torneo);
-																			setIsOpen(true);
-																		}}
-																		style={{
-																			cursor: 'pointer'
-																		}}
-																	>
-																		❌
-																	</span>
+																	!jugador.scores &&
+																	jugador.asistio === 1 && (
+																		<span
+																			onClick={() => {
+																				setJugadorDatos(jugador);
+																				setTorneoDatos(torneo);
+																				setIsOpen(true);
+																			}}
+																			style={{
+																				cursor: 'pointer'
+																			}}
+																			title='Cargar scores'
+																		>
+																			❌
+																		</span>
+																	)
 																)}
 															</td>
 															<td>
-																{jugador.scores && (
+																{!jugador.scores ? (
+																	<FaPersonCircleMinus
+																		size={20}
+																		cursor='pointer'
+																		title='Registrar ausente'
+																		color={jugador.asistio === 0 && 'red'}
+																		onClick={async () => {
+																			if (
+																				!window.confirm(
+																					jugador.asistio === 1 ? `REGISTRAR A ${jugador.nombre} COMO AUSENTE` : `REGISTRAR A ${jugador.nombre} COMO PRESENTE`
+																				)
+																			)
+																				return;
+																			await axios.put(`${process.env.REACT_APP_BACKEND_URL}/inscriptos/${jugador.id}/asistencia`, {
+																				asistio: jugador.asistio === 1 ? 0 : 1
+																			});
+																			await axios
+																				.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
+																				.then((response) => setJugadoresTorneo(response.data))
+																				.catch((error) => console.error(error));
+																		}}
+																	/>
+																) : (
 																	<MdEdit
 																		size={20}
 																		cursor='pointer'
 																		onClick={() => {
-																			setJugadorDatos(
-																				jugador
-																			);
+																			setJugadorDatos(jugador);
 																			setTorneoDatos(torneo);
 																			setIsOpenEdit(true);
 																		}}
@@ -566,34 +479,15 @@ function JugadoresTorneo({ club }) {
 																	title='Eliminar'
 																	cursor='pointer'
 																	onClick={async () => {
-																		if (
-																			!window.confirm(
-																				`¿Seguro que deseas eliminar a ${jugador.nombre}?`
-																			)
-																		)
-																			return;
+																		if (!window.confirm(`¿Seguro que deseas eliminar a ${jugador.nombre}?`)) return;
 																		try {
-																			await axios.delete(
-																				`${process.env.REACT_APP_BACKEND_URL}/inscriptos/${jugador.id}`
-																			);
+																			await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/inscriptos/${jugador.id}`);
 																			await axios
-																				.get(
-																					`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`
-																				)
-																				.then((response) =>
-																					setJugadoresTorneo(
-																						response.data
-																					)
-																				)
-																				.catch((error) =>
-																					console.error(
-																						error
-																					)
-																				);
+																				.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?torneos=${idsTorneosAdmin.join(',')}`)
+																				.then((response) => setJugadoresTorneo(response.data))
+																				.catch((error) => console.error(error));
 																		} catch (error) {
-																			alert(
-																				'Error al eliminar jugador'
-																			);
+																			alert('ERROR AL ELIMINAR JUGADOR. INTENTA NUEVAMENTE');
 																			console.error(error);
 																		}
 																	}}
@@ -620,12 +514,7 @@ function JugadoresTorneo({ club }) {
 			)}
 
 			{isOpenEdit && (
-				<ModalEdit
-					jugadorDatos={jugadorDatos}
-					setJugadoresTorneo={setJugadoresTorneo}
-					idsTorneosAdmin={idsTorneosAdmin}
-					setIsOpen={setIsOpenEdit}
-				/>
+				<ModalEdit jugadorDatos={jugadorDatos} setJugadoresTorneo={setJugadoresTorneo} idsTorneosAdmin={idsTorneosAdmin} setIsOpen={setIsOpenEdit} />
 			)}
 
 			{showGraf && (
@@ -638,7 +527,7 @@ function JugadoresTorneo({ club }) {
 						sx={{
 							position: 'absolute',
 							top: 5,
-							right: 10,
+							right: 5,
 							color: 'white'
 						}}
 						onClick={() => setShowGraf(false)}
@@ -655,24 +544,19 @@ function JugadoresTorneo({ club }) {
 						<span>Teléfono: {jugadorDatos.telefono}</span>
 						<span>
 							Email:{' '}
-							<a
-								href={'mailto:' + emailInscripto}
-								style={{ color: 'blue' }}
-							>
+							<a href={'mailto:' + emailInscripto} style={{ color: 'blue' }}>
 								{emailInscripto}
 							</a>
 						</span>
 						<span>Nro. de transacción: {jugadorDatos.comprobante}</span>
-						<span>
-							Se realizó el pago en la fecha: {jugadorDatos.fech_alta}
-						</span>
+						<span>Se realizó el pago en la fecha: {jugadorDatos.fech_alta}</span>
 					</div>
 					<IconButton
 						size='medium'
 						sx={{
 							position: 'absolute',
 							top: 5,
-							right: 10,
+							right: 5,
 							color: 'white'
 						}}
 						onClick={() => {

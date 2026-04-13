@@ -11,9 +11,10 @@ import firebaseApp from '../firebase/firebase';
 import { getAuth, signOut } from 'firebase/auth';
 import { TbGolfOff } from 'react-icons/tb';
 import { Link, useNavigate } from 'react-router-dom';
+import { Typography } from '@mui/material';
 const auth = getAuth(firebaseApp);
 
-function NavBarAdmin() {
+function NavBarAdmin({logoClub}) {
 	const [anchorElNav, setAnchorElNav] = useState(null);
 	const navigate = useNavigate();
 
@@ -26,7 +27,7 @@ function NavBarAdmin() {
 
 	return (
 		<AppBar className='nav' sx={{ backgroundColor: 'green', padding: '0 30px' }}>
-			<Container sx={{ maxWidth: '1600px !important' }}>
+			<Container sx={{ maxWidth: 'none !important' }}>
 				<Toolbar disableGutters>
 					<Box
 						sx={{
@@ -34,7 +35,7 @@ function NavBarAdmin() {
 							display: { xs: 'flex', md: 'none' }
 						}}
 					>
-						<IconButton size='large' aria-label='account of current user' aria-controls='menu-appbar' aria-haspopup='true' onClick={handleOpenNavMenu} color='inherit'>
+						<IconButton size='large' aria-controls='menu-appbar' aria-haspopup='true' onClick={handleOpenNavMenu} color='inherit'>
 							<CgMenuLeft size={30} />
 						</IconButton>
 						<Menu
@@ -51,12 +52,6 @@ function NavBarAdmin() {
 							}}
 							open={Boolean(anchorElNav)}
 							onClose={handleCloseNavMenu}
-							sx={{
-								display: {
-									xs: 'block',
-									md: 'none'
-								}
-							}}
 						>
 							<MenuItem>
 								<Link to='/administrador' className='nav_a'>
@@ -85,6 +80,18 @@ function NavBarAdmin() {
 							</MenuItem>
 						</Menu>
 					</Box>
+					<Typography
+						noWrap
+						sx={{
+							display: {
+								xs: 'flex',
+								md: 'none'
+							},
+							flexGrow: 1
+						}}
+					>
+						<img src={logoClub} alt='logo' className='nav_logo' />
+					</Typography>
 					<Box
 						sx={{
 							flexGrow: 1,

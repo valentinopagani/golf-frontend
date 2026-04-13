@@ -27,7 +27,7 @@ function NavBar() {
 
 	return (
 		<AppBar className='nav' sx={{ backgroundColor: 'green', padding: '0 30px' }}>
-			<Container sx={{ maxWidth: '1600px !important' }}>
+			<Container sx={{ maxWidth: 'none !important' }}>
 				<Toolbar disableGutters>
 					<Typography
 						noWrap
@@ -48,7 +48,7 @@ function NavBar() {
 							display: { xs: 'flex', md: 'none' }
 						}}
 					>
-						<IconButton size='large' aria-label='account of current user' aria-controls='menu-appbar' aria-haspopup='true' onClick={handleOpenNavMenu} color='inherit'>
+						<IconButton size='large' aria-controls='menu-appbar' aria-haspopup='true' onClick={handleOpenNavMenu} color='inherit'>
 							<CgMenuLeft size={30} />
 						</IconButton>
 						<Menu
@@ -65,12 +65,6 @@ function NavBar() {
 							}}
 							open={Boolean(anchorElNav)}
 							onClose={handleCloseNavMenu}
-							sx={{
-								display: {
-									xs: 'block',
-									md: 'none'
-								}
-							}}
 						>
 							{pages.map((page) => (
 								<MenuItem key={page} onClick={handleCloseNavMenu}>
@@ -105,7 +99,14 @@ function NavBar() {
 						}}
 					>
 						{pages.map((page) => (
-							<NavLink key={page} activeclassName='active' className='nav_a' to={page === 'inicio' ? '/' : page.replaceAll(' ', '')} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }}>
+							<NavLink
+								key={page}
+								activeclassName='active'
+								className='nav_a'
+								to={page === 'inicio' ? '/' : page.replaceAll(' ', '')}
+								onClick={handleCloseNavMenu}
+								sx={{ my: 2, color: 'white', display: 'block' }}
+							>
 								{page}
 							</NavLink>
 						))}

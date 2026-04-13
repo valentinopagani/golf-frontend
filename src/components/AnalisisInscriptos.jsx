@@ -25,7 +25,9 @@ function AnalisisInscriptos({ club }) {
 
 	useEffect(() => {
 		axios
-			.get(`${process.env.REACT_APP_BACKEND_URL}/estadisticas/inscriptosStats?club=${encodeURIComponent(JSON.stringify(club))}&fechaMin=${fechaMin}&fechaMax=${fechaMax}`)
+			.get(
+				`${process.env.REACT_APP_BACKEND_URL}/estadisticas/inscriptosStats?clubId=${club.id}&clubNombre=${club.nombre}&fechaMin=${fechaMin}&fechaMax=${fechaMax}`
+			)
 			.then((response) => setCategoryStats(response.data))
 			.catch((error) => console.error(error));
 	}, [fechaMin, fechaMax, club]);
@@ -34,17 +36,19 @@ function AnalisisInscriptos({ club }) {
 		<div>
 			<h2>Análisis de inscriptos totales o por categoría</h2>
 			<div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-				<div>
-					<label>Desde: </label>
-					<input type='date' onChange={(e) => fechaMinSelec(e.target.value)} style={{ marginRight: 8 }} />
+				<div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, margin: '10px 0' }}>
+					<label>
+						Desde:{' '}
+						<input type='date' onChange={(e) => fechaMinSelec(e.target.value)} style={{ marginRight: 8 }} />
+					</label>
 
-					<label style={{ marginLeft: 8 }}>Hasta: </label>
-					<input type='date' onChange={(e) => fechaMaxSelec(e.target.value)} />
+					<label>
+						Hasta:{' '}
+						<input type='date' onChange={(e) => fechaMaxSelec(e.target.value)} />
+					</label>
 				</div>
 			</div>
-			<div>
-				<CategoryStatsChart data={categoryStats} />
-			</div>
+			<CategoryStatsChart data={categoryStats} />
 		</div>
 	);
 }

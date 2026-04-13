@@ -20,7 +20,7 @@
 	padding: 0 !important;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 902px) {
 
 	.MuiContainer-root,
 	.MuiContainer-maxWidthXl,
@@ -177,7 +177,7 @@ ul li button {
 	border: none
 }
 
-@media (max-width: 900px) {
+@media (max-width: 902px) {
 	.nav_a {
 		color: black;
 	}

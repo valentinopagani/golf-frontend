@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import firebaseApp, { db } from '../firebase/firebase';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, signOut, updateProfile } from 'firebase/auth';
 import getUsuarios from '../firebase/usuarios';
 import { doc, setDoc } from 'firebase/firestore';
 import AdminClubs from './AdminClubs';
@@ -10,29 +10,19 @@ const auth = getAuth(firebaseApp);
 
 function AdminView({ user }) {
 	const [usuarios, setUsuarios] = useState([]);
-	const [clubes, setClubes] = useState([]);
-	const [filterName, setFilterName] = useState('');
-	const [filteredClubes, setFilteredClubes] = useState([]);
 
 	useEffect(() => {
+		if (user?.email !== process.env.REACT_APP_EMAIL_ADMIN) return;
 		const fetchUsuarios = async () => {
 			const usuariosData = await getUsuarios();
 			setUsuarios(usuariosData);
 		};
 		fetchUsuarios();
-
-		axios
-			.get(`${process.env.REACT_APP_BACKEND_URL}/clubes`)
-			.then((response) => setClubes(response.data))
-			.catch((error) => console.error(error));
-	}, []);
+	}, [user]);
 
 	// REGISTRAR USUARIO
 	async function registrarNuevoUsuario(nuevoUsuario) {
 		try {
-			const currentUser = auth.currentUser;
-			const currentEmail = currentUser.email;
-			const currentPassword = prompt('Ingrese su contraseña:');
 			const userCredential = await createUserWithEmailAndPassword(auth, nuevoUsuario.email, nuevoUsuario.contraseña);
 			// Actualizar el displayName
 			const user = userCredential.user;
@@ -44,20 +34,13 @@ function AdminView({ user }) {
 			await setDoc(userRef, {
 				nombre: nuevoUsuario.nombre,
 				email: nuevoUsuario.email,
-				contraseña: nuevoUsuario.contraseña,
 				fech_alta: nuevoUsuario.fech_alta
 			});
-			await signInWithEmailAndPassword(auth, currentEmail, currentPassword);
 			window.location.reload();
 		} catch (error) {
 			console.error('Error al registrar usuario:', error);
 		}
 	}
-
-	// BUSCAR CLUB
-	useEffect(() => {
-		setFilteredClubes(clubes.filter((club) => club.nombre.toLowerCase().includes(filterName.toLowerCase())));
-	}, [filterName, clubes]);
 
 	return (
 		<>
@@ -90,16 +73,6 @@ function AdminView({ user }) {
 						<button type='submit'>Registrar Usuario</button>
 					</form>
 
-					<h2>Usuarios existentes:</h2>
-					{usuarios.map((usuario) => (
-						<div key={usuario.id}>
-							<h3>{usuario.id}</h3>
-							<span>email: {usuario.email}</span>
-							<br />
-							<span>contraseña: {usuario.contraseña}</span>
-						</div>
-					))}
-
 					<h2>Agregar un nuevo club:</h2>
 					<form
 						autoComplete='off'
@@ -114,7 +87,16 @@ function AdminView({ user }) {
 							const vinculo = e.target.usuarioVinculado.value;
 							const fech_alta = new Date().toLocaleDateString();
 							try {
-								await axios.post(`${process.env.REACT_APP_BACKEND_URL}/clubes`, { nombre, logo, direccion, telefono, contacto, email, vinculo, fech_alta });
+								await axios.post(`${process.env.REACT_APP_BACKEND_URL}/clubes`, {
+									nombre,
+									logo,
+									direccion,
+									telefono,
+									contacto,
+									email,
+									vinculo,
+									fech_alta
+								});
 							} catch (error) {
 								console.error('estas errado pa', error);
 							}
@@ -136,27 +118,6 @@ function AdminView({ user }) {
 						</select>
 						<button type='submit'>Agregar Club</button>
 					</form>
-
-					<h2>Clubes existentes:</h2>
-					<input type='text' placeholder='Filtrar por nombre de club' value={filterName} onChange={(e) => setFilterName(e.target.value)} autoComplete='off' />
-
-					{filteredClubes.map((club) => (
-						<div key={club.id}>
-							<h3>{club.nombre}</h3>
-							<span>id: {club.id}</span> <br />
-							<img src={club.logo} alt='logo del club' />
-							<br />
-							<span>{club.logo}</span> <br />
-							<span>direccion: {club.direccion}</span> <br />
-							<span>telefono: {club.telefono}</span> <br />
-							<span>contacto: {club.contacto}</span> <br />
-							<span>email: {club.email}</span> <br />
-							<span>usuario vinculado: {club.vinculo}</span> <br />
-							{/* <button onClick={() => eliminarClub(club.id)} className='delete_bt'>
-								Eliminar
-							</button> */}
-						</div>
-					))}
 				</div>
 			) : (
 				// VISTA ADMIN CLUB

@@ -23,11 +23,20 @@ const CategoryStatsChart = ({ data }) => {
 
 	const options = {
 		responsive: true,
+		maintainAspectRatio: false,
 		plugins: {
 			legend: { display: false },
 			title: { display: false }
 		},
 		scales: {
+			x: {
+				ticks: {
+					autoSkip: false,
+					maxRotation: 0,
+					minRotation: 0,
+					align: 'center'
+				}
+			},
 			y: {
 				beginAtZero: true,
 				ticks: { stepSize: 1 }
@@ -35,9 +44,13 @@ const CategoryStatsChart = ({ data }) => {
 		}
 	};
 
+	const chartWidth = Math.max(data.labels.length * 140, 700);
+
 	return (
-		<div style={{ width: '100%', maxWidth: 900, margin: '0 auto', background: '#f3faf3', borderRadius: 8, padding: 16 }}>
-			<Bar data={chartData} options={options} />
+		<div style={{ background: '#f3faf3', borderRadius: 8, padding: '10px', height: '400px', overflowX: 'auto', width: '100%' }}>
+			<div style={{ height: '100%', width: chartWidth, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+				<Bar data={chartData} options={options} />
+			</div>
 		</div>
 	);
 };

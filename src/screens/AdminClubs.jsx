@@ -10,7 +10,7 @@ import Parametros from './Parametros';
 import axios from 'axios';
 
 function AdminClubs({ user }) {
-	const [clubes, setClubes] = useState([]);
+	const [club, setClub] = useState([]);
 	const [fechaActual, setFechaActual] = useState('');
 
 	const userId = user.displayName.toLowerCase().replaceAll(' ', '');
@@ -25,7 +25,7 @@ function AdminClubs({ user }) {
 	useEffect(() => {
 		axios
 			.get(`${process.env.REACT_APP_BACKEND_URL}/clubes?vinculo=${userId}`)
-			.then((response) => setClubes(response.data))
+			.then((response) => setClub(response.data[0]))
 			.catch((error) => console.error(error));
 
 		setFechaActual(
@@ -42,19 +42,21 @@ function AdminClubs({ user }) {
 
 	return (
 		<div className='admin_club'>
-			<NavBarAdmin />
-			{clubes.map((club) => (
-				<div key={club.id}>
-					<Routes>
-						<Route exact path='/administrador' element={<TorneosAdminClubs club={club} user={user} />} />
-						<Route exact path='/administrador/inscripciones' element={<JugadoresTorneo club={club} />} />
-						<Route exact path='/administrador/jugadores' element={<JugadoresAdm club={club} />} />
-						<Route exact path='/administrador/reservas' element={<TablaReservas clubId={club.id} clubNombre={club.nombre} fecha={fechaActual} user={userId} />} />
-						<Route exact path='/administrador/miscanchas' element={<Canchas club={club} />} />
-						<Route exact path='/administrador/parametros' element={<Parametros club={club} fecha={fechaActual} />} />
-					</Routes>
-				</div>
-			))}
+			<NavBarAdmin logoClub={club.logo} />
+			<div>
+				<Routes>
+					<Route exact path='/administrador' element={<TorneosAdminClubs club={club} user={user} />} />
+					<Route exact path='/administrador/inscripciones' element={<JugadoresTorneo club={club} />} />
+					<Route exact path='/administrador/jugadores' element={<JugadoresAdm club={club} />} />
+					<Route
+						exact
+						path='/administrador/reservas'
+						element={<TablaReservas clubId={club.id} clubNombre={club.nombre} fecha={fechaActual} user={userId} />}
+					/>
+					<Route exact path='/administrador/miscanchas' element={<Canchas club={club} />} />
+					<Route exact path='/administrador/parametros' element={<Parametros club={club} fecha={fechaActual} />} />
+				</Routes>
+			</div>
 		</div>
 	);
 }

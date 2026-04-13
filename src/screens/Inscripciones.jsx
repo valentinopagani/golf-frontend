@@ -1,15 +1,6 @@
 import { useEffect, useState } from 'react';
 import { compareAsc, parse } from 'date-fns';
-import {
-	Alert,
-	Box,
-	Button,
-	Chip,
-	IconButton,
-	Paper,
-	Stack,
-	Typography
-} from '@mui/material';
+import { Alert, Box, Button, Chip, IconButton, Paper, Stack, Typography } from '@mui/material';
 import { IoCloseCircleSharp } from 'react-icons/io5';
 import { useForm } from 'react-hook-form';
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
@@ -60,9 +51,7 @@ function Inscripciones() {
 	useEffect(() => {
 		if (torneoData === null) return;
 		axios
-			.get(
-				`${process.env.REACT_APP_BACKEND_URL}/clubes?idTorneo=${torneoData.clubVinculo}`
-			)
+			.get(`${process.env.REACT_APP_BACKEND_URL}/clubes?idTorneo=${torneoData.clubVinculo}`)
 			.then((response) => {
 				setMetodoPago(response.data[0].metodo_inscripcion);
 				setDireccionClub(response.data[0].direccion);
@@ -99,12 +88,8 @@ function Inscripciones() {
 
 		const fetchJugador = async () => {
 			try {
-				const response = await axios.get(
-					`${process.env.REACT_APP_BACKEND_URL}/jugadores?dniExacto=${filtroDni}`
-				);
-				setJugadorRegistrado(
-					response.data.length > 0 ? response.data[0] : false
-				);
+				const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/jugadores?dniExacto=${filtroDni}`);
+				setJugadorRegistrado(response.data.length > 0 ? response.data[0] : false);
 			} catch (error) {
 				console.error('Error buscando jugadores:', error);
 				setJugadorRegistrado(false);
@@ -117,12 +102,8 @@ function Inscripciones() {
 	const onSubmit = handleSubmit(async (data) => {
 		const dataForm = {
 			dni: data.dni,
-			nombre: jugadorRegistrado
-				? jugadorRegistrado.nombre
-				: `${data.apellido} ${data.nombre}`,
-			club_socio: jugadorRegistrado
-				? jugadorRegistrado.clubSocio
-				: data.club_socio,
+			nombre: jugadorRegistrado ? jugadorRegistrado.nombre : `${data.apellido} ${data.nombre}`,
+			club_socio: jugadorRegistrado ? jugadorRegistrado.clubSocio : data.club_socio,
 			tel: data.tel,
 			email: data.email,
 			hdc: data.hdc,
@@ -131,21 +112,15 @@ function Inscripciones() {
 		};
 		// Verificar en el backend si el DNI ya está inscripto en este torneo
 		try {
-			const r = await axios.get(
-				`${process.env.REACT_APP_BACKEND_URL}/inscriptos/check`,
-				{
-					params: {
-						torneo: torneoData.id,
-						dni: data.dni,
-						categoria: data.categoria
-					}
+			const r = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos/check`, {
+				params: {
+					torneo: torneoData.id,
+					dni: data.dni,
+					categoria: data.categoria
 				}
-			);
+			});
 			if (r.data && r.data.exists) {
-				setError([
-					1,
-					'Ya existe una inscripción con ese número de matrícula para este torneo'
-				]);
+				setError([1, 'Ya existe una inscripción con ese número de matrícula para este torneo']);
 				return;
 			} else {
 				setFormulario(dataForm);
@@ -175,18 +150,10 @@ function Inscripciones() {
 					{qrData && (
 						<div style={{ textAlign: 'center', marginTop: 20 }}>
 							<h4>Tu QR de pago</h4>
-							<img
-								src={qrData}
-								alt='qr'
-								style={{ width: 200, height: 200 }}
-							/>
+							<img src={qrData} alt='qr' style={{ width: 200, height: 200 }} />
 
 							{/* Estado del pago en vivo */}
-							{hash && (
-								<p style={{ marginTop: 10, fontWeight: 'bold' }}>
-									Verificando pago...
-								</p>
-							)}
+							{hash && <p style={{ marginTop: 10, fontWeight: 'bold' }}>Verificando pago...</p>}
 						</div>
 					)}
 				</div>
@@ -204,15 +171,13 @@ function Inscripciones() {
 					>
 						{loading ? 'esperando pago' : 'generar pago'}
 					</Button>
+					{!verificado && <span style={{ color: 'gray' }}>Primero completá el formulario</span>}
 					{preference && (
 						<Wallet
 							initialization={{ preferenceId: preference }}
 							onError={(error) => {
 								console.error(error);
-								setError([
-									2,
-									'Ocurrió un error con el Wallet de MercadoPago'
-								]);
+								setError([2, 'Ocurrió un error con el Wallet de MercadoPago']);
 							}}
 						/>
 					)}
@@ -225,15 +190,12 @@ function Inscripciones() {
 	const generarQRSIRO = async () => {
 		try {
 			setLoadingQR(true);
-			const response = await axios.post(
-				`${process.env.REACT_APP_BACKEND_URL}/crear-qr`,
-				{
-					concepto: `Inscripcion`,
-					descripcion: `Torneo en ${torneoData.nombreClubVinculo}`,
-					importe: torneoData.valor,
-					formulario: formulario
-				}
-			);
+			const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/crear-qr`, {
+				concepto: `Inscripcion`,
+				descripcion: `Torneo en ${torneoData.nombreClubVinculo}`,
+				importe: torneoData.valor,
+				formulario: formulario
+			});
 			const stringQR = response.data.qr_string;
 			// Guardar el hash del pago
 			setHash(response.data.hash);
@@ -242,7 +204,7 @@ function Inscripciones() {
 			setQrData(qrImg);
 		} catch (error) {
 			console.error(error);
-			alert('Error generando el QR.');
+			alert('ERROR AL GENERAR QR');
 		} finally {
 			setLoadingQR(false);
 		}
@@ -279,19 +241,12 @@ function Inscripciones() {
 				type: 1, // 0 = reserva, 1 = inscripción
 				formulario: formulario
 			};
-			const response = await axios.post(
-				`${process.env.REACT_APP_BACKEND_URL}/create_preference`,
-				payload,
-				{ withCredentials: true }
-			);
+			const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/create_preference`, payload, { withCredentials: true });
 			const { id } = response.data;
 			return id;
 		} catch (error) {
 			console.error('Error', error);
-			setError([
-				2,
-				'Ocurrió un error al generar preferencias de MercadoPago'
-			]);
+			setError([2, 'Ocurrió un error al generar preferencias de MercadoPago']);
 			setLoading(false);
 		}
 	};
@@ -316,7 +271,7 @@ function Inscripciones() {
 						<span
 							style={{
 								color: 'green',
-								fontSize: 26,
+								fontSize: 30,
 								fontWeight: 'bolder'
 							}}
 						>
@@ -327,7 +282,7 @@ function Inscripciones() {
 						<span
 							style={{
 								color: 'red',
-								fontSize: 26,
+								fontSize: 30,
 								fontWeight: 'bolder'
 							}}
 						>
@@ -339,27 +294,14 @@ function Inscripciones() {
 
 			<div>
 				{!torneos.length ? (
-					<div>
-						No hay torneos disponibles para inscribirse en este momento...
-					</div>
+					<div>No hay torneos disponibles para inscribirse en este momento...</div>
 				) : (
 					torneos
-						.sort((a, b) =>
-							compareAsc(
-								parse(a.fech_ini, 'dd/MM/yyyy', new Date()),
-								parse(b.fech_ini, 'dd/MM/yyyy', new Date())
-							)
-						)
+						.sort((a, b) => compareAsc(parse(a.fech_ini, 'dd/MM/yyyy', new Date()), parse(b.fech_ini, 'dd/MM/yyyy', new Date())))
 						.map((torneo) => (
-							<Paper
-								key={torneo.id}
-								elevation={3}
-								className='torneos_ins'
-							>
-								<Box sx={{ maxWidth: '600px' }}>
-									<Typography variant='span'>
-										🚩 {torneo.nombreClubVinculo} 🚩
-									</Typography>
+							<Paper key={torneo.id} elevation={3} className='torneos_ins'>
+								<Box sx={{ maxWidth: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+									<Typography variant='span'>🚩 {torneo.nombreClubVinculo} 🚩</Typography>
 									<Typography variant='h6' sx={{ fontWeight: 'bold' }}>
 										{torneo.nombre}
 									</Typography>
@@ -370,34 +312,16 @@ function Inscripciones() {
 											fontWeight: 'bold'
 										}}
 									>
-										📅{' '}
-										{torneo.fech_ini !== torneo.fech_fin
-											? torneo.fech_ini + ' al ' + torneo.fech_fin
-											: torneo.fech_ini}
+										📅 {torneo.fech_ini !== torneo.fech_fin ? torneo.fech_ini + ' al ' + torneo.fech_fin : torneo.fech_ini}
 									</Typography>
-									<Stack
-										direction='row'
-										marginTop={1}
-										flexWrap='wrap'
-										maxWidth='600px'
-										justifyContent='center'
-									>
+									<Stack direction='row' marginTop={1} flexWrap='wrap' maxWidth='600px' justifyContent='center'>
 										{torneo.categorias.map((categoria, idx) => (
-											<Chip
-												key={idx + categoria.nombre}
-												label={categoria.nombre}
-												size='small'
-												sx={{ margin: 0.4 }}
-											/>
+											<Chip key={idx + categoria.nombre} label={categoria.nombre} size='small' sx={{ margin: 0.4 }} />
 										))}
 									</Stack>
 								</Box>
 								<Box>
-									<Button
-										color='success'
-										variant='contained'
-										onClick={() => openModal(torneo)}
-									>
+									<Button color='success' variant='contained' onClick={() => openModal(torneo)}>
 										inscripción
 									</Button>
 								</Box>
@@ -410,26 +334,13 @@ function Inscripciones() {
 				<div className='modal'>
 					<div className='modal_cont_ins'>
 						<h3>Formulario de Inscripción</h3>
-						{error && (
-							<Alert severity={error[0] === 1 ? 'warning' : 'error'}>
-								{error[1]}
-							</Alert>
-						)}
+						{error && <Alert severity={error[0] === 1 ? 'warning' : 'error'}>{error[1]}</Alert>}
 						<div className='modal_cont_ins_contain'>
 							<div>
-								<span style={{ fontWeight: 800 }}>
-									Datos del Torneo:
-								</span>
+								<span style={{ fontWeight: 800 }}>Datos del Torneo:</span>
 								<hr />
 								<span>Torneo: {torneoData.nombre}</span>
-								<span>
-									Fecha:{' '}
-									{torneoData.fech_ini !== torneoData.fech_fin
-										? torneoData.fech_ini +
-											' al ' +
-											torneoData.fech_fin
-										: torneoData.fech_ini}
-								</span>
+								<span>Fecha: {torneoData.fech_ini !== torneoData.fech_fin ? torneoData.fech_ini + ' al ' + torneoData.fech_fin : torneoData.fech_ini}</span>
 								<span>Lugar: {torneoData.nombreClubVinculo}</span>
 								<iframe
 									src={direccionClub}
@@ -439,16 +350,12 @@ function Inscripciones() {
 									loading='lazy'
 									referrerpolicy='no-referrer-when-downgrade'
 								></iframe>
-								<span style={{ color: '#008000', fontWeight: 900 }}>
-									Valor ${torneoData.valor}
-								</span>
+								<span style={{ color: '#008000', fontWeight: 900 }}>Valor ${torneoData.valor}</span>
 								{botonesPago()}
 							</div>
 
 							<div>
-								<span style={{ fontWeight: 800 }}>
-									Datos del jugador:
-								</span>
+								<span style={{ fontWeight: 800 }}>Datos del jugador:</span>
 								<hr />
 								<form
 									style={{
@@ -471,10 +378,7 @@ function Inscripciones() {
 											{...register('dni', {
 												required: 'Completá el n. de matrícula *',
 												onChange: (e) => {
-													e.target.value = e.target.value.replace(
-														/[^0-9]/g,
-														''
-													);
+													e.target.value = e.target.value.replace(/[^0-9]/g, '');
 													setFiltroDni(e.target.value);
 													if (e.target.value.length !== 6) {
 														setJugadorRegistrado(false);
@@ -485,11 +389,7 @@ function Inscripciones() {
 											minLength={4}
 										/>
 									</label>
-									{errors.dni && (
-										<span style={{ color: 'red', fontSize: 12 }}>
-											{errors.dni.message}
-										</span>
-									)}
+									{errors.dni && <span style={{ color: 'red', fontSize: 12 }}>{errors.dni.message}</span>}
 
 									{!jugadorRegistrado ? (
 										<>
@@ -497,66 +397,43 @@ function Inscripciones() {
 												Nombre/s:
 												<input
 													type='text'
+													autoCapitalize='words'
 													{...register('nombre', {
 														required: 'Completá el nombre *',
 														onChange: (e) => {
-															e.target.value =
-																e.target.value.replace(
-																	/[^a-zA-Z ]/g,
-																	''
-																);
+															e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '');
 														}
 													})}
 												/>
 											</label>
-											{errors.nombre && (
-												<span
-													style={{ color: 'red', fontSize: 12 }}
-												>
-													{errors.nombre.message}
-												</span>
-											)}
+											{errors.nombre && <span style={{ color: 'red', fontSize: 12 }}>{errors.nombre.message}</span>}
 
 											<label>
 												Apellido/s:
 												<input
 													type='text'
+													autoCapitalize='words'
 													{...register('apellido', {
 														required: 'Completá el apellido *'
 													})}
 												/>
 											</label>
-											{errors.apellido && (
-												<span
-													style={{ color: 'red', fontSize: 12 }}
-												>
-													{errors.apellido.message}
-												</span>
-											)}
+											{errors.apellido && <span style={{ color: 'red', fontSize: 12 }}>{errors.apellido.message}</span>}
 
 											<label>
 												Club Pertenencia:
 												<input
 													type='text'
+													autoCapitalize='words'
 													{...register('club_socio', {
-														required:
-															'Completá el club al que perteneces *'
+														required: 'Completá el club al que perteneces *'
 													})}
 												/>
 											</label>
-											{errors.club_socio && (
-												<span
-													style={{ color: 'red', fontSize: 12 }}
-												>
-													{errors.club_socio.message}
-												</span>
-											)}
+											{errors.club_socio && <span style={{ color: 'red', fontSize: 12 }}>{errors.club_socio.message}</span>}
 										</>
 									) : (
-										<span style={{ color: 'green' }}>
-											Ya tenemos los datos de{' '}
-											{jugadorRegistrado.nombre}
-										</span>
+										<span style={{ color: 'green' }}>Ya tenemos los datos de {jugadorRegistrado.nombre}</span>
 									)}
 
 									<label>
@@ -567,10 +444,7 @@ function Inscripciones() {
 											{...register('tel', {
 												required: 'Completá el n. de teléfono *',
 												onChange: (e) => {
-													e.target.value = e.target.value.replace(
-														/[^0-9]/g,
-														''
-													);
+													e.target.value = e.target.value.replace(/[^0-9]/g, '');
 												},
 												min: {
 													value: 100000000,
@@ -579,11 +453,7 @@ function Inscripciones() {
 											})}
 										/>
 									</label>
-									{errors.tel && (
-										<span style={{ color: 'red', fontSize: 12 }}>
-											{errors.tel.message}
-										</span>
-									)}
+									{errors.tel && <span style={{ color: 'red', fontSize: 12 }}>{errors.tel.message}</span>}
 
 									<label>
 										Email:
@@ -598,11 +468,7 @@ function Inscripciones() {
 											})}
 										/>
 									</label>
-									{errors.email && (
-										<span style={{ color: 'red', fontSize: 12 }}>
-											{errors.email.message}
-										</span>
-									)}
+									{errors.email && <span style={{ color: 'red', fontSize: 12 }}>{errors.email.message}</span>}
 
 									<label>
 										HDC:
@@ -611,20 +477,13 @@ function Inscripciones() {
 											{...register('hdc', {
 												required: 'Completá el handicap *',
 												onChange: (e) => {
-													e.target.value = e.target.value.replace(
-														/[^0-9]/g,
-														''
-													);
+													e.target.value = e.target.value.replace(/[^0-9]/g, '');
 												}
 											})}
 											maxLength={2}
 										/>
 									</label>
-									{errors.hdc && (
-										<span style={{ color: 'red', fontSize: 12 }}>
-											{errors.hdc.message}
-										</span>
-									)}
+									{errors.hdc && <span style={{ color: 'red', fontSize: 12 }}>{errors.hdc.message}</span>}
 
 									<label>
 										Categoría:
@@ -637,15 +496,9 @@ function Inscripciones() {
 										</select>
 									</label>
 
-									<span style={{ color: '#1976d2', fontSize: 14 }}>
-										¡Verificá que los datos ingresados sean correctos!
-									</span>
+									<span style={{ color: '#1976d2', fontSize: 14 }}>¡Verificá que los datos ingresados sean correctos!</span>
 
-									<Button
-										variant='contained'
-										size='small'
-										type='submit'
-									>
+									<Button variant='contained' size='small' type='submit'>
 										cargar
 									</Button>
 								</form>
@@ -659,7 +512,7 @@ function Inscripciones() {
 						sx={{
 							position: 'absolute',
 							top: 5,
-							right: 10,
+							right: 5,
 							color: 'white'
 						}}
 					>

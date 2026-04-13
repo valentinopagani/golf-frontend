@@ -16,7 +16,6 @@ function TablaReservas({ clubId, clubNombre, fecha, user }) {
 	const [errorDia, setErrorDia] = useState(false);
 	const [error, setError] = useState(false);
 	const [loading, setLoading] = useState(false);
-	const [email, setEmail] = useState('');
 	const [disponibilidad, setDisponibilidad] = useState(0);
 	const [preference, setPreference] = useState(null);
 	const items = [0, 1, 2, 3];
@@ -76,6 +75,7 @@ function TablaReservas({ clubId, clubNombre, fecha, user }) {
 		} catch (error) {
 			console.error('Error al crear preferencia', error);
 			setError([2, 'Ocurrió un error al generar preferencias de MercadoPago']);
+			setLoading(false);
 		}
 	};
 
@@ -144,6 +144,7 @@ function TablaReservas({ clubId, clubNombre, fecha, user }) {
 		setTeeModal(tee);
 		setIsOpen(true);
 	}
+
 	function closeModal() {
 		setIsOpen(false);
 		setPreference(null);
@@ -151,7 +152,6 @@ function TablaReservas({ clubId, clubNombre, fecha, user }) {
 		setHoraPass('');
 		setDisponibilidad(0);
 		setError(false);
-		setEmail('');
 	}
 
 	function obtenerDatos(turno, reserva) {
@@ -177,7 +177,7 @@ function TablaReservas({ clubId, clubNombre, fecha, user }) {
 			closeDetalles();
 			setError([0, 'Reserva eliminada con éxito.']);
 		} catch (error) {
-			alert('Error al eliminar reserva');
+			alert('ERROR AL ELIMINAR RESERVA. INTENTA NUEVAMENTE');
 			console.error(error);
 		}
 	};
@@ -197,7 +197,14 @@ function TablaReservas({ clubId, clubNombre, fecha, user }) {
 
 			{error[0] === 0 && <Alert severity='success'>{error[1]}</Alert>}
 
-			<div style={{ display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
+			<div
+				style={{
+					display: 'flex',
+					gap: '20px',
+					alignItems: 'center',
+					flexWrap: 'wrap'
+				}}
+			>
 				<h3>
 					Seleccionar fecha: <input type='date' onChange={(e) => setFechaSelec(e.target.value)} defaultValue={fecha} min={!user ? fecha : null} />
 				</h3>
@@ -243,7 +250,12 @@ function TablaReservas({ clubId, clubNombre, fecha, user }) {
 											{items.map((i) => (
 												<td key={i}>
 													{turno.reservas && turno.reservas[i] ? (
-														<span onClick={() => user && obtenerDatos(turno, turno.reservas[i])} style={{ cursor: user && 'pointer' }}>
+														<span
+															onClick={() => user && obtenerDatos(turno, turno.reservas[i])}
+															style={{
+																cursor: user && 'pointer'
+															}}
+														>
 															{turno.reservas[i].jugador}
 														</span>
 													) : (
@@ -252,7 +264,11 @@ function TablaReservas({ clubId, clubNombre, fecha, user }) {
 												</td>
 											))}
 											<td>
-												<button disabled={turno.disponibles === 0 || fechaSelec < fecha || (!user && fechaSelec === fecha)} title={turno.disponibles === 0 ? 'No hay disponibilidad' : null} onClick={() => openModal(turno.hora, turno.disponibles, teeSelec)}>
+												<button
+													disabled={turno.disponibles === 0 || fechaSelec < fecha || (!user && fechaSelec === fecha)}
+													title={turno.disponibles === 0 ? 'No hay disponibilidad' : null}
+													onClick={() => openModal(turno.hora, turno.disponibles, teeSelec)}
+												>
 													Reservar
 												</button>
 											</td>
@@ -272,7 +288,12 @@ function TablaReservas({ clubId, clubNombre, fecha, user }) {
 							Reservar salida {fechaSelec.split('-').reverse().join('-')} a las {horaPass}hs. | Tee {teeModal}
 						</h3>
 
-						<p style={{ color: disponibilidad >= 3 ? '#468828ff' : 'orange', marginBottom: '10px' }}>
+						<p
+							style={{
+								color: disponibilidad >= 3 ? '#468828ff' : 'orange',
+								marginBottom: '10px'
+							}}
+						>
 							{disponibilidad} {disponibilidad > 1 ? 'lugares libres' : 'lugar libre'} en este horario
 						</p>
 
@@ -284,10 +305,12 @@ function TablaReservas({ clubId, clubNombre, fecha, user }) {
 							autoComplete='off'
 							onSubmit={(e) => {
 								e.preventDefault();
-
 								setLoading(true);
 
 								const telefono = e.target.telefono.value;
+								const email = e.target.email.value;
+								const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 								if (!user) {
 									if (telefono.length < 10) {
 										setError([1, 'Teléfono inválido']);
@@ -296,8 +319,14 @@ function TablaReservas({ clubId, clubNombre, fecha, user }) {
 									}
 								}
 
-								function capitalizarConRegex(oracion) {
-									return oracion.replace(/(^|\s)\S/g, function (letra) {
+								if (email && !emailRegex.test(email)) {
+									setError([1, 'Email inválido']);
+									setLoading(false);
+									return;
+								}
+
+								function capitalizarConRegex(cadena) {
+									return cadena.replace(/(^|\s)\S/g, function (letra) {
 										return letra.toUpperCase();
 									});
 								}
@@ -308,26 +337,61 @@ function TablaReservas({ clubId, clubNombre, fecha, user }) {
 								const nombreApellido = e.target.apellido.value + ' ' + e.target.nombre.value;
 								const jugador = normalizeName(capitalizarConRegex(nombreApellido.toLowerCase()));
 
-								const formularioObj = { email: email, telefono: telefono };
+								const formularioObj = {
+									email: e.target.email.value,
+									telefono: telefono
+								};
 
 								reservar(horaPass, jugador, teeModal, formularioObj);
 							}}
 						>
 							<label>
-								Nombre/s: <input type='text' id='nombre' minLength={3} placeholder='Nombre completo' onChange={(e) => (e.target.value = e.target.value.replace(/[^A-Za-z ]/g, ''))} required />
+								Nombre/s:{' '}
+								<input
+									type='text'
+									id='nombre'
+									minLength={3}
+									placeholder='Nombre completo'
+									onChange={(e) => (e.target.value = e.target.value.replace(/[^A-Za-z ]/g, ''))}
+									autoCapitalize='words'
+									required
+								/>
 							</label>
 							<label>
-								Apellido/s: <input type='text' id='apellido' minLength={2} placeholder='Apellido completo' onChange={(e) => (e.target.value = e.target.value.replace(/[^A-Za-z ]/g, ''))} required />
+								Apellido/s:{' '}
+								<input
+									type='text'
+									id='apellido'
+									minLength={2}
+									placeholder='Apellido completo'
+									onChange={(e) => (e.target.value = e.target.value.replace(/[^A-Za-z ]/g, ''))}
+									autoCapitalize='words'
+									required
+								/>
 							</label>
 							<label>
-								Teléfono: <input type='text' id='telefono' maxLength={10} placeholder='Número de teléfono' onChange={(e) => (e.target.value = e.target.value.replace(/[^0-9]/g, ''))} required={!user} />
+								Teléfono:{' '}
+								<input
+									type='text'
+									id='telefono'
+									maxLength={10}
+									placeholder='Número de teléfono'
+									onChange={(e) => (e.target.value = e.target.value.replace(/[^0-9]/g, ''))}
+									required={!user}
+								/>
 							</label>
 							<label>
 								e-mail:
-								<input type='email' id='email' value={email} placeholder='Dirección de correo electrónico' onChange={(e) => setEmail(e.target.value)} required={!user} />
+								<input type='email' id='email' placeholder='Dirección de correo electrónico' required={!user} />
 							</label>
 
-							<div style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
+							<div
+								style={{
+									display: 'flex',
+									gap: '20px',
+									marginTop: '10px'
+								}}
+							>
 								<Button variant='contained' size='small' color='error' onClick={() => closeModal()}>
 									cerrar
 								</Button>
@@ -353,7 +417,10 @@ function TablaReservas({ clubId, clubNombre, fecha, user }) {
 			{isOpenDetalle && (
 				<div className='modal'>
 					<div className='modal_cont'>
-						<h3>{fechaSelec.split('-').reverse().join('-') + ' | ' + horaPass}hs.</h3>
+						<h3>
+							{fechaSelec.split('-').reverse().join('-') + ' | ' + horaPass}
+							hs.
+						</h3>
 
 						<span>Jugador: {detalles.jugador}</span>
 						<span>Reservó el día: {detalles.fech_alta.slice(0, 10).split('-').reverse().join('-')}</span>
@@ -372,6 +439,9 @@ function TablaReservas({ clubId, clubNombre, fecha, user }) {
 						<div style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
 							<Button variant='contained' size='small' color='error' onClick={() => eliminarReserva()}>
 								eliminar reserva
+							</Button>
+							<Button variant='contained' size='small' color='secondary' onClick={() => eliminarReserva()}>
+								modificar fecha
 							</Button>
 							<Button variant='contained' size='small' color='primary' onClick={() => closeDetalles()}>
 								cerrar

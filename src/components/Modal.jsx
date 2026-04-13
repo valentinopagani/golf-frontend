@@ -155,7 +155,7 @@ function Modal({
 				</form>
 				<IconButton
 					size='medium'
-					sx={{ position: 'absolute', top: 5, right: 10, color: 'white' }}
+					sx={{ position: 'absolute', top: 5, right: 5, color: 'white' }}
 					onClick={() => setIsOpen(false)}
 				>
 					<IoCloseCircleSharp fontSize='40' />

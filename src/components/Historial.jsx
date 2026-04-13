@@ -18,7 +18,10 @@ function Historial({ dni }) {
 	const renderTorneosJugados = () => {
 		return historialJugador.inscriptos?.map((jugador) => {
 			const torneo = historialJugador.torneos.find((torneo) => torneo.id === jugador.torneo);
-			const total = jugador.categoria.toLowerCase().includes('gross') || jugador.categoria.toLowerCase().includes('scratch') ? jugador.totalScore : jugador.totalScore - jugador.handicap;
+			const total =
+				jugador.categoria.toLowerCase().includes('gross') || jugador.categoria.toLowerCase().includes('scratch')
+					? jugador.totalScore
+					: jugador.totalScore - jugador.handicap;
 			return (
 				<tr key={jugador.id}>
 					<td>{torneo?.fech_ini}</td>
@@ -55,7 +58,7 @@ function Historial({ dni }) {
 				</thead>
 				<tbody>{renderTorneosJugados()}</tbody>
 			</table>
-			{isOpen && <ModalEst torneo={torneoDatos} jugadorDatos={jugadorDatos} setIsOpen={setIsOpen} condicion={true} />}
+			{isOpen && <ModalEst torneo={torneoDatos} jugadorDatos={jugadorDatos} setIsOpen={setIsOpen} historial={true} />}
 		</div>
 	);
 }

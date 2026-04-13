@@ -5,8 +5,9 @@ import './firebase/firebase';
 import './App.css';
 import './adminclub.css';
 import './home.css';
+import AdminView from './screens/AdminView';
 
-const AdminClubs = lazy(() => import('./screens/AdminClubs'));
+// const AdminClubs = lazy(() => import('./screens/AdminClubs'));
 const UserView = lazy(() => import('./screens/UserView'));
 
 function App() {
@@ -44,7 +45,7 @@ function App() {
 	return (
 		<div className='App'>
 			<Router>
-				<Suspense fallback={<div className='loading'>Cargando...</div>}>{user ? <AdminClubs user={user} /> : <UserView />}</Suspense>
+				<Suspense fallback={<div className='loading'>Cargando...</div>}>{user ? <AdminView user={user} /> : <UserView />}</Suspense>
 			</Router>
 		</div>
 	);

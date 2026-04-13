@@ -53,7 +53,17 @@ function UserView() {
 						<Route
 							path='/*'
 							element={
-								<div style={{ width: '100%', height: 'calc(100vh - 68px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+								<div
+									style={{
+										width: '100%',
+										height: 'calc(100vh - 68px)',
+										display: 'flex',
+										flexDirection: 'column',
+										alignItems: 'center',
+										justifyContent: 'center',
+										gap: 10
+									}}
+								>
 									<h2 style={{ fontSize: 40, fontWeight: 'bold' }}>PÁGINA NO ENCONTRADA</h2>
 									<span>Comprueba que la ruta de dirección sea la correcta...</span>
 									<img src={draw} alt='draw' width={150} />
@@ -66,9 +76,13 @@ function UserView() {
 					</Routes>
 				</Suspense>
 			</div>
+			
 			<footer>
 				<svg viewBox='0 0 500 150' preserveAspectRatio='none' style={{ height: '30px', width: '100%', marginBottom: -6 }}>
-					<path d='M-13.26,41.94 C156.04,253.13 324.21,-44.89 503.67,87.33 L500.00,150.00 L0.00,150.00 Z' style={{ stroke: 'none', fill: '#cccccc' }}></path>
+					<path
+						d='M-13.26,41.94 C156.04,253.13 324.21,-44.89 503.67,87.33 L500.00,150.00 L0.00,150.00 Z'
+						style={{ stroke: 'none', fill: '#cccccc' }}
+					></path>
 				</svg>
 				<div>
 					<img src={drawplayer} alt='draw' className='draw_player' />

@@ -115,7 +115,14 @@ function TorneosAdminClubs({ club, user }) {
 					<input type='text' id='cat_nombre' placeholder='nombre de categoría:' required />
 					<button type='submit'>Crear</button>
 				</form>
-				<div style={{ display: 'flex', flexWrap: 'wrap', gap: 15, marginTop: 10 }}>
+				<div
+					style={{
+						display: 'flex',
+						flexWrap: 'wrap',
+						gap: 15,
+						marginTop: 10
+					}}
+				>
 					{categorias.map((cat) => (
 						<Paper key={cat.id} elevation={1} sx={{ padding: 1 }}>
 							<span>{cat.nombre} </span>
@@ -131,7 +138,7 @@ function TorneosAdminClubs({ club, user }) {
 											.then((response) => setCategorias(response.data))
 											.catch((error) => console.error(error));
 									} catch (error) {
-										alert('Error al eliminar categoria');
+										alert('ERROR AL ELIMINAR CATEGORIA. INTENTA NUEVAMENTE');
 										console.error(error);
 									}
 								}}
@@ -153,7 +160,7 @@ function TorneosAdminClubs({ club, user }) {
 							onSubmit={async (e) => {
 								e.preventDefault();
 								if (selectedCategorias.length === 0) {
-									return alert('Selecciona al menos una categoría');
+									return alert('SELECCIONA AL MENOS UNA CATEGORIA');
 								}
 								const fechaInicio = e.target.fech_ini.value.split('-');
 								const fechaFin = e.target.fech_fin.value.split('-');
@@ -208,7 +215,7 @@ function TorneosAdminClubs({ club, user }) {
 										.then((response) => setTorneosAntiguos(response.data))
 										.catch((error) => console.error(error));
 								} catch (error) {
-									alert('Algo ha salido mal');
+									alert('ALGO HA SALIDO MAL. INTENTA NUEVAMENTE');
 									console.error('Error al crear torneo o categorías', error);
 								}
 							}}
@@ -311,7 +318,13 @@ function TorneosAdminClubs({ club, user }) {
 					<div id='torneos'>
 						<h3>Todos los Torneos:</h3>
 						<label htmlFor='search'>Buscar: </label>
-						<input type='text' placeholder='Filtrar por nombre de torneo:' value={filterName} onChange={(e) => setFilterName(e.target.value)} autoComplete='off' />
+						<input
+							type='text'
+							placeholder='Filtrar por nombre de torneo:'
+							value={filterName}
+							onChange={(e) => setFilterName(e.target.value)}
+							autoComplete='off'
+						/>
 						<FaSearch />
 						<div className='torneos'>
 							{filteredTorneos.length === 0 ? (
@@ -355,7 +368,7 @@ function TorneosAdminClubs({ club, user }) {
 							onSubmit={async (e) => {
 								e.preventDefault();
 								if (selectedCategorias.length === 0) {
-									return alert('Selecciona al menos una categoría');
+									return alert('SELECCIONA AL MENOS UNA CATEGORIA');
 								}
 								const fechaInicio = e.target.fech_ini.value.split('-');
 								const fechaFin = e.target.fech_fin.value.split('-');
@@ -398,7 +411,7 @@ function TorneosAdminClubs({ club, user }) {
 									setInscEdit(false);
 									setEditModal(false);
 								} catch (error) {
-									alert('Algo ha salido mal');
+									alert('ALGO HA SALIDO MAL. INTENTA NUEVAMENTE');
 									console.error('Error al editar torneo', error);
 								}
 							}}
@@ -410,11 +423,25 @@ function TorneosAdminClubs({ club, user }) {
 							</div>
 							<div>
 								<label>Fecha de inicio:</label>
-								<input type='date' id='fech_ini' defaultValue={datosEdit.fech_ini.split('/').reverse().join('-')} max={fechFin} onChange={(e) => setFechIni(e.target.value)} required />
+								<input
+									type='date'
+									id='fech_ini'
+									defaultValue={datosEdit.fech_ini.split('/').reverse().join('-')}
+									max={fechFin}
+									onChange={(e) => setFechIni(e.target.value)}
+									required
+								/>
 							</div>
 							<div>
 								<label>Fecha de cierre:</label>
-								<input type='date' id='fech_fin' defaultValue={datosEdit.fech_fin.split('/').reverse().join('-')} min={fechIni} onChange={(e) => setFechFin(e.target.value)} required />
+								<input
+									type='date'
+									id='fech_fin'
+									defaultValue={datosEdit.fech_fin.split('/').reverse().join('-')}
+									min={fechIni}
+									onChange={(e) => setFechFin(e.target.value)}
+									required
+								/>
 							</div>
 							<div>
 								<label>Cancha:</label>
@@ -443,7 +470,12 @@ function TorneosAdminClubs({ club, user }) {
 								<FormGroup onChange={handleCheckboxChange}>
 									{categorias.map((categoria) => (
 										<div key={categoria.id}>
-											<input type='checkbox' value={categoria.nombre} style={{ cursor: 'pointer' }} defaultChecked={selectedCategorias.includes(categoria.nombre)} />
+											<input
+												type='checkbox'
+												value={categoria.nombre}
+												style={{ cursor: 'pointer' }}
+												defaultChecked={selectedCategorias.includes(categoria.nombre)}
+											/>
 											<span> {categoria.nombre}</span>
 										</div>
 									))}

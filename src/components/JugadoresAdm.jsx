@@ -12,23 +12,16 @@ function JugadoresAdm({ club }) {
 
 	useEffect(() => {
 		axios
-			.get(
-				`${process.env.REACT_APP_BACKEND_URL}/jugadores?nombreClub=${club.nombre}&nombreDni=${filtro}`
-			)
+			.get(`${process.env.REACT_APP_BACKEND_URL}/jugadores?nombreClub=${club.nombre}&nombreDni=${filtro}`)
 			.then((response) => setJugadores(response.data))
 			.catch((error) => console.error(error));
 	}, [filtro, club.nombre]);
 
-	const fechaNacimiento =
-		isOpen && jugadorData.fech_nac !== null
-			? jugadorData.fech_nac.split('/').reverse().join('-')
-			: 0;
+	const fechaNacimiento = isOpen && jugadorData.fech_nac !== null ? jugadorData.fech_nac.split('/').reverse().join('-') : 0;
 
 	return (
 		<div>
-			<h3 style={{ textAlign: 'center', fontStyle: 'italic' }}>
-				{club.nombre}
-			</h3>
+			<h3 style={{ textAlign: 'center', fontStyle: 'italic' }}>{club.nombre}</h3>
 			<h2>MODIFICÁ LOS DATOS DE TUS JUGADORES</h2>
 
 			<div className='estadisticas'>
@@ -55,12 +48,7 @@ function JugadoresAdm({ club }) {
 						style={{ width: '350px', padding: '7px 5px' }}
 						required
 					/>
-					<Button
-						type='submit'
-						variant='contained'
-						color='inherit'
-						size='medium'
-					>
+					<Button type='submit' variant='contained' color='inherit' size='medium'>
 						🏌🏻‍♂️🔍
 					</Button>
 					{bandera && (
@@ -113,11 +101,7 @@ function JugadoresAdm({ club }) {
 				<div style={{ textAlign: 'center' }}>
 					<h2>OBSERVÁ, MODIFICÁ Y REGISTRÁ LAS RESERVAS EN TU CLUB</h2>
 					<Link to={`/administrador/reservas`}>
-						<Button
-							variant='contained'
-							size='large'
-							style={{ marginTop: '20px' }}
-						>
+						<Button variant='contained' size='large' style={{ marginTop: '20px' }}>
 							📋 reservas
 						</Button>
 					</Link>
@@ -137,63 +121,38 @@ function JugadoresAdm({ club }) {
 								e.preventDefault();
 								const nombre = e.target.nombre.value;
 								const dni = e.target.dni.value;
-								const fech_nac = e.target.fech_nac.value
-									.split('-')
-									.reverse()
-									.join('/');
+								const fech_nac = e.target.fech_nac.value.split('-').reverse().join('/');
 								const sexo = e.target.sexo.value;
 								const clubSocio = e.target.clubSocio.value;
 								try {
-									await axios.put(
-										`${process.env.REACT_APP_BACKEND_URL}/jugadores/` +
-											jugadorData.id,
-										{
-											nombre,
-											dni,
-											fech_nac,
-											sexo,
-											clubSocio
-										}
-									);
+									await axios.put(`${process.env.REACT_APP_BACKEND_URL}/jugadores/` + jugadorData.id, {
+										nombre,
+										dni,
+										fech_nac,
+										sexo,
+										clubSocio
+									});
 									setIsOpen(false);
-									const response = await axios.get(
-										`${process.env.REACT_APP_BACKEND_URL}/jugadores?nombreClub=${club.nombre}&nombreDni=${filtro}`
-									);
+									const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/jugadores?nombreClub=${club.nombre}&nombreDni=${filtro}`);
 									setJugadores(response.data);
-									alert('Jugador actualizado con éxito');
+									alert('JUGADOR ACTUALIZADO CORRECTAMENTE');
 								} catch (error) {
-									alert('Error al actualizar jugador');
+									alert('ERROR AL ACTUALIZAR JUGADOR. INTENTA NUEVAMENTE');
 									console.error('Error al actualizar jugador:', error);
 								}
 							}}
 						>
 							<div>
 								<label>
-									Matrícula:{' '}
-									<input
-										type='number'
-										name='dni'
-										defaultValue={jugadorData.dni}
-										style={{ width: '100px' }}
-									/>
+									Matrícula: <input type='number' name='dni' defaultValue={jugadorData.dni} style={{ width: '100px' }} />
 								</label>
 								<label>
-									Nombre:{' '}
-									<input
-										type='text'
-										name='nombre'
-										defaultValue={jugadorData.nombre}
-									/>
+									Nombre: <input type='text' name='nombre' defaultValue={jugadorData.nombre} />
 								</label>
 							</div>
 							<div>
 								<label>
-									Fecha de Nacimiento:{' '}
-									<input
-										type='date'
-										name='fech_nac'
-										defaultValue={fechaNacimiento}
-									/>
+									Fecha de Nacimiento: <input type='date' name='fech_nac' defaultValue={fechaNacimiento} />
 								</label>
 								<label>
 									Género:{' '}
@@ -204,28 +163,14 @@ function JugadoresAdm({ club }) {
 									</select>
 								</label>
 								<label>
-									Club Asociado:{' '}
-									<input
-										type='text'
-										name='clubSocio'
-										defaultValue={jugadorData.clubSocio}
-									/>
+									Club Asociado: <input type='text' name='clubSocio' defaultValue={jugadorData.clubSocio} />
 								</label>
 							</div>
 							<Stack direction='row'>
-								<Button
-									variant='contained'
-									size='small'
-									onClick={() => setIsOpen(false)}
-								>
+								<Button variant='contained' size='small' onClick={() => setIsOpen(false)}>
 									cancelar
 								</Button>
-								<Button
-									variant='contained'
-									size='small'
-									color='success'
-									type='submit'
-								>
+								<Button variant='contained' size='small' color='success' type='submit'>
 									actualizar
 								</Button>
 							</Stack>

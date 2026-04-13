@@ -91,11 +91,27 @@ function Parametros({ club, fecha }) {
 					<span>Horario de salida: </span>
 
 					<label>
-						desde las <input type='time' value={inicioSalida} max={finSalida} onChange={(e) => setInicioSalida(e.target.value)} style={{ border: 'none', background: '#d5d5d5ff' }} required />
+						desde las{' '}
+						<input
+							type='time'
+							value={inicioSalida}
+							max={finSalida}
+							onChange={(e) => setInicioSalida(e.target.value)}
+							style={{ border: 'none', background: '#d5d5d5ff' }}
+							required
+						/>
 						hs.
 					</label>
 					<label>
-						hasta las <input type='time' value={finSalida} min={inicioSalida} onChange={(e) => setFinSalida(e.target.value)} style={{ border: 'none', background: '#d5d5d5ff' }} required />
+						hasta las{' '}
+						<input
+							type='time'
+							value={finSalida}
+							min={inicioSalida}
+							onChange={(e) => setFinSalida(e.target.value)}
+							style={{ border: 'none', background: '#d5d5d5ff' }}
+							required
+						/>
 						hs.
 					</label>
 				</div>
@@ -133,7 +149,12 @@ function Parametros({ club, fecha }) {
 				onSubmit={async (e) => {
 					e.preventDefault();
 					try {
-						if (!window.confirm(`Seguro que deseas inhabilitar las reservas para el día ${e.target.fecha_inhabilitada.value.slice(0, 10).split('-').reverse().join('-')}?`)) return;
+						if (
+							!window.confirm(
+								`Seguro que deseas inhabilitar las reservas para el día ${e.target.fecha_inhabilitada.value.slice(0, 10).split('-').reverse().join('-')}?`
+							)
+						)
+							return;
 						const data = {
 							fecha: e.target.fecha_inhabilitada.value,
 							motivo: e.target.motivo.value,

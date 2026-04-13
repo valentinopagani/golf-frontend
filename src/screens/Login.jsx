@@ -47,7 +47,13 @@ function Login() {
 					})}
 				/>
 				{errors.email && <span style={{ color: 'red', fontSize: 12 }}>{errors.email.message}</span>}
-				<input type='password' id='password' name='password' placeholder='********' {...register('password', { required: 'Ingresá tu contraseña *', minLength: { value: 6 } })} />
+				<input
+					type='password'
+					id='password'
+					name='password'
+					placeholder='********'
+					{...register('password', { required: 'Ingresá tu contraseña *', minLength: { value: 6 } })}
+				/>
 				{errors.password && <span style={{ color: 'red', fontSize: 12 }}>{errors.password.message}</span>}
 				<button type='submit' className='submit'>
 					Iniciar Sesión

@@ -4,47 +4,25 @@ import { FaRegAddressCard } from 'react-icons/fa6';
 import { FcStatistics } from 'react-icons/fc';
 import { FaHistory } from 'react-icons/fa';
 import { Bar, Pie } from 'react-chartjs-2';
-import {
-	Chart as ChartJS,
-	CategoryScale,
-	LinearScale,
-	BarElement,
-	ArcElement,
-	Title,
-	Tooltip,
-	Legend
-} from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 import { IoCloseCircleSharp } from 'react-icons/io5';
 import axios from 'axios';
 
 const Historial = lazy(() => import('./Historial'));
 
-ChartJS.register(
-	CategoryScale,
-	LinearScale,
-	BarElement,
-	ArcElement,
-	Title,
-	Tooltip,
-	Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
-function ModalEst({ torneo, jugadorDatos, setIsOpen, condicion }) {
+function ModalEst({ torneo, jugadorDatos, setIsOpen, historial }) {
 	const [datosCancha, setDatosCancha] = useState([]);
 
 	useEffect(() => {
 		axios
-			.get(
-				`${process.env.REACT_APP_BACKEND_URL}/canchas?idCancha=${torneo.cancha}`
-			)
+			.get(`${process.env.REACT_APP_BACKEND_URL}/canchas?idCancha=${torneo.cancha}`)
 			.then((response) => setDatosCancha(response.data[0]))
 			.catch((error) => console.error(error));
 	}, [torneo.cancha]);
 
-	const scores = useMemo(
-		() => jugadorDatos.scores || {},
-		[jugadorDatos.scores]
-	);
+	const scores = useMemo(() => jugadorDatos.scores || {}, [jugadorDatos.scores]);
 	const numRondas = torneo.rondas;
 	const numHoyos = datosCancha ? datosCancha.cant_hoyos : 18;
 	const [tabs, setTabs] = useState(1);
@@ -86,13 +64,7 @@ function ModalEst({ torneo, jugadorDatos, setIsOpen, condicion }) {
 				{
 					label: 'Porcentaje',
 					data: [par, birdie, bogey, dbogey, aguila],
-					backgroundColor: [
-						'#bde9ba',
-						'#f7ebb9',
-						'#c9d9e9',
-						'#f5c7c5',
-						'#78ffd2'
-					]
+					backgroundColor: ['#bde9ba', '#f7ebb9', '#c9d9e9', '#f5c7c5', '#78ffd2']
 				}
 			]
 		};
@@ -105,20 +77,9 @@ function ModalEst({ torneo, jugadorDatos, setIsOpen, condicion }) {
 		for (let rondaIndex = 0; rondaIndex < numRondas; rondaIndex++) {
 			datasets.push({
 				label: `${rondaIndex + 1}º Ronda | Par`,
-				data: labels.map(
-					(_, hoyoIndex) =>
-						scores[`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`] || 0
-				),
+				data: labels.map((_, hoyoIndex) => scores[`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`] || 0),
 				backgroundColor:
-					rondaIndex + 1 === 1
-						? '#3572ffff'
-						: rondaIndex + 1 === 2
-							? '#51e386'
-							: rondaIndex + 1 === 3
-								? '#73dada'
-								: rondaIndex + 1
-									? '#f37a7a'
-									: 'black'
+					rondaIndex + 1 === 1 ? '#3572ffff' : rondaIndex + 1 === 2 ? '#51e386' : rondaIndex + 1 === 3 ? '#73dada' : rondaIndex + 1 ? '#f37a7a' : 'black'
 			});
 		}
 
@@ -127,10 +88,7 @@ function ModalEst({ torneo, jugadorDatos, setIsOpen, condicion }) {
 			datasets: [
 				{
 					label: 'Par Hoyo',
-					data: labels.map(
-						(_, hoyoIndex) =>
-							datosCancha.hoyos[`hoyo_${hoyoIndex + 1}`].par
-					),
+					data: labels.map((_, hoyoIndex) => datosCancha.hoyos[`hoyo_${hoyoIndex + 1}`].par),
 					backgroundColor: 'rgba(0, 0, 0, 0.3)'
 				},
 				...datasets
@@ -142,12 +100,8 @@ function ModalEst({ torneo, jugadorDatos, setIsOpen, condicion }) {
 		const gross = jugadorDatos.totalScore || 0;
 		const parCancha = datosCancha.parCancha || 0;
 		const handicap = jugadorDatos.handicap || 0;
-		if (jugadorDatos.scores === null || jugadorDatos.totalScore === null)
-			return 'SIN DATOS';
-		if (
-			jugadorDatos.categoria.toLowerCase().includes('gross') ||
-			jugadorDatos.categoria.toLowerCase().includes('scratch')
-		) {
+		if (jugadorDatos.totalScore === null) return 0;
+		if (jugadorDatos.categoria.toLowerCase().includes('gross') || jugadorDatos.categoria.toLowerCase().includes('scratch')) {
 			return gross - parCancha;
 		} else {
 			return gross - handicap - parCancha * torneo.rondas;
@@ -158,43 +112,25 @@ function ModalEst({ torneo, jugadorDatos, setIsOpen, condicion }) {
 		<div className='modal'>
 			<div className='modal_cont'>
 				<h4>
-					{torneo.nombre.toUpperCase()} -{' '}
-					{jugadorDatos.categoria.toUpperCase()}
+					{torneo.nombre.toUpperCase()} - {jugadorDatos.categoria.toUpperCase()}
 				</h4>
 				<h3>
-					{jugadorDatos.dni + ' - ' + jugadorDatos.nombre.toUpperCase()}{' '}
-					<b className='green'>(HCP: {jugadorDatos.handicap})</b>
+					{jugadorDatos.dni + ' - ' + jugadorDatos.nombre.toUpperCase()} <b className='green'>(HCP: {jugadorDatos.handicap})</b>
 				</h3>
 
-				<Box
-					sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}
-					className='est_bts'
-				>
-					<Button
-						color='black'
-						variant='contained'
-						sx={{ margin: '0 10px' }}
-						onClick={() => setTabs(1)}
-					>
+				{jugadorDatos.asistio === 0 && <h3 style={{ color: 'red' }}>NO ASISTIÓ</h3>}
+
+				<Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }} className='est_bts'>
+					<Button color='black' variant='contained' sx={{ margin: '0 10px' }} onClick={() => setTabs(1)}>
 						<FaRegAddressCard size={26} style={{ marginRight: 5 }} />
 						tarjeta
 					</Button>
-					<Button
-						color='black'
-						variant='contained'
-						sx={{ margin: '0 10px' }}
-						onClick={() => setTabs(2)}
-					>
+					<Button color='black' variant='contained' sx={{ margin: '0 10px' }} onClick={() => setTabs(2)}>
 						<FcStatistics size={28} style={{ marginRight: 5 }} />
 						estadísticas
 					</Button>
-					{!condicion && (
-						<Button
-							color='black'
-							variant='contained'
-							sx={{ margin: '0 10px' }}
-							onClick={() => setTabs(3)}
-						>
+					{!historial && (
+						<Button color='black' variant='contained' sx={{ margin: '0 10px' }} onClick={() => setTabs(3)}>
 							<FaHistory size={20} style={{ marginRight: 5 }} />
 							historial
 						</Button>
@@ -206,40 +142,23 @@ function ModalEst({ torneo, jugadorDatos, setIsOpen, condicion }) {
 						{Array.from({ length: numRondas }, (_, rondaIndex) => {
 							let parJugador = 0;
 							return (
-								<div
-									className='table_container'
-									key={`ronda${rondaIndex + 1}`}
-								>
+								<div className='table_container' key={`ronda${rondaIndex + 1}`}>
 									<table className='tabla_jugador'>
 										<caption>Ronda {rondaIndex + 1}</caption>
 										<thead>
 											<tr>
 												<th>Hoyo</th>
-												{Array.from(
-													{ length: numHoyos },
-													(_, hoyoIndex) => (
-														<th key={`hoyo${hoyoIndex + 1}`}>
-															{hoyoIndex + 1}
-														</th>
-													)
-												)}
+												{Array.from({ length: numHoyos }, (_, hoyoIndex) => (
+													<th key={`hoyo${hoyoIndex + 1}`}>{hoyoIndex + 1}</th>
+												))}
 												<th>Gross</th>
 												<th>Neto</th>
 											</tr>
 											<tr>
 												<td>Par Hoyo</td>
-												{Array.from(
-													{ length: numHoyos },
-													(_, hoyoIndex) => (
-														<td key={`par_hoyo${hoyoIndex + 1}`}>
-															{
-																datosCancha.hoyos[
-																	`hoyo_${hoyoIndex + 1}`
-																].par
-															}
-														</td>
-													)
-												)}
+												{Array.from({ length: numHoyos }, (_, hoyoIndex) => (
+													<td key={`par_hoyo${hoyoIndex + 1}`}>{datosCancha.hoyos[`hoyo_${hoyoIndex + 1}`].par}</td>
+												))}
 												<td>{datosCancha.parCancha}</td>
 												<td>-</td>
 											</tr>
@@ -247,111 +166,53 @@ function ModalEst({ torneo, jugadorDatos, setIsOpen, condicion }) {
 										<tbody>
 											<tr>
 												<td>Golpes jugador</td>
-												{Array.from(
-													{ length: numHoyos },
-													(_, hoyoIndex) => {
-														const score =
-															scores[
-																`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`
-															];
-														parJugador += score;
-														const parHoyo =
-															datosCancha.hoyos[
-																`hoyo_${hoyoIndex + 1}`
-															].par;
-														if (score === parHoyo) {
-															return (
-																<td
-																	key={`hoyo${hoyoIndex + 1}`}
-																	className='par'
-																>
-																	<span>
-																		{scores[
-																			`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`
-																		] || '-'}
-																	</span>
-																</td>
-															);
-														} else if (score === parHoyo + 1) {
-															return (
-																<td
-																	key={`hoyo${hoyoIndex + 1}`}
-																	className='bogey'
-																>
-																	<span>
-																		{scores[
-																			`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`
-																		] || '-'}
-																	</span>
-																</td>
-															);
-														} else if (score === parHoyo - 1) {
-															return (
-																<td
-																	key={`hoyo${hoyoIndex + 1}`}
-																	className='birdie'
-																>
-																	<span>
-																		{scores[
-																			`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`
-																		] || '-'}
-																	</span>
-																</td>
-															);
-														} else if (score === parHoyo + 2) {
-															return (
-																<td
-																	key={`hoyo${hoyoIndex + 1}`}
-																	className='dbogey'
-																>
-																	<span>
-																		{scores[
-																			`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`
-																		] || '-'}
-																	</span>
-																</td>
-															);
-														} else if (score === parHoyo - 2) {
-															return (
-																<td
-																	key={`hoyo${hoyoIndex + 1}`}
-																	className='aguila'
-																>
-																	<span>
-																		{scores[
-																			`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`
-																		] || '-'}
-																	</span>
-																</td>
-															);
-														} else {
-															return (
-																<td
-																	key={`hoyo${hoyoIndex + 1}`}
-																>
-																	<span>
-																		{scores[
-																			`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`
-																		] || '-'}
-																	</span>
-																</td>
-															);
-														}
+												{Array.from({ length: numHoyos }, (_, hoyoIndex) => {
+													const score = scores[`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`];
+													parJugador += score;
+													const parHoyo = datosCancha.hoyos[`hoyo_${hoyoIndex + 1}`].par;
+													if (score === parHoyo) {
+														return (
+															<td key={`hoyo${hoyoIndex + 1}`} className='par'>
+																<span>{scores[`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`] || '-'}</span>
+															</td>
+														);
+													} else if (score === parHoyo + 1) {
+														return (
+															<td key={`hoyo${hoyoIndex + 1}`} className='bogey'>
+																<span>{scores[`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`] || '-'}</span>
+															</td>
+														);
+													} else if (score === parHoyo - 1) {
+														return (
+															<td key={`hoyo${hoyoIndex + 1}`} className='birdie'>
+																<span>{scores[`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`] || '-'}</span>
+															</td>
+														);
+													} else if (score === parHoyo + 2) {
+														return (
+															<td key={`hoyo${hoyoIndex + 1}`} className='dbogey'>
+																<span>{scores[`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`] || '-'}</span>
+															</td>
+														);
+													} else if (score === parHoyo - 2) {
+														return (
+															<td key={`hoyo${hoyoIndex + 1}`} className='aguila'>
+																<span>{scores[`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`] || '-'}</span>
+															</td>
+														);
+													} else {
+														return (
+															<td key={`hoyo${hoyoIndex + 1}`}>
+																<span>{scores[`ronda${rondaIndex + 1}_hoyo${hoyoIndex + 1}`] || '-'}</span>
+															</td>
+														);
 													}
-												)}
+												})}
 												<td>{parJugador || 0}</td>
-												{jugadorDatos.categoria
-													.toLowerCase()
-													.includes('gross') ||
-												jugadorDatos.categoria
-													.toLowerCase()
-													.includes('scratch') ? (
+												{jugadorDatos.categoria.toLowerCase().includes('gross') || jugadorDatos.categoria.toLowerCase().includes('scratch') ? (
 													<td>-</td>
 												) : (
-													<td>
-														{parJugador - jugadorDatos.handicap ||
-															0}
-													</td>
+													<td>{parJugador - jugadorDatos.handicap || 0}</td>
 												)}
 											</tr>
 											{rondaIndex + 1 === numRondas && (
@@ -394,9 +255,7 @@ function ModalEst({ torneo, jugadorDatos, setIsOpen, condicion }) {
 												label: function (context) {
 													const label = context.label || '';
 													const value = context.parsed || 0;
-													return (
-														label + ': ' + value.toFixed(0) + '%'
-													);
+													return label + ': ' + value.toFixed(0) + '%';
 												}
 											}
 										}
@@ -442,11 +301,7 @@ function ModalEst({ torneo, jugadorDatos, setIsOpen, condicion }) {
 
 				{tabs === 3 && <Historial dni={jugadorDatos.dni} />}
 
-				<IconButton
-					onClick={() => setIsOpen(false)}
-					size='medium'
-					sx={{ position: 'absolute', top: 5, right: 10, color: 'white' }}
-				>
+				<IconButton onClick={() => setIsOpen(false)} size='medium' sx={{ position: 'absolute', top: 5, right: 5, color: 'white' }}>
 					<IoCloseCircleSharp fontSize='40' />
 				</IconButton>
 			</div>

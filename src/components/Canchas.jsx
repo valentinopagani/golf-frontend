@@ -29,7 +29,7 @@ function Canchas({ club }) {
 				.then((response) => setCanchas(response.data))
 				.catch((error) => console.error(error));
 		} catch (error) {
-			alert('Algo ha salido mal');
+			alert('ALGO HA SALIDO MAL AL GUARDAR LOS HOYOS. INTENTA NUEVAMENTE');
 			console.error('Error al guardar hoyos', error);
 		}
 	}
@@ -138,7 +138,14 @@ function Canchas({ club }) {
 							<div className='table_container'>
 								<table>
 									<caption>
-										<div style={{ display: 'flex', gap: '15px', alignItems: 'center', justifyContent: 'center' }}>
+										<div
+											style={{
+												display: 'flex',
+												gap: '15px',
+												alignItems: 'center',
+												justifyContent: 'center'
+											}}
+										>
 											<span>{cancha.nombre.toUpperCase()}</span>
 											<FaRegTrashCan
 												size={17}
@@ -152,9 +159,9 @@ function Canchas({ club }) {
 															.get(`${process.env.REACT_APP_BACKEND_URL}/canchas?idClub=${club.id}`)
 															.then((response) => setCanchas(response.data))
 															.catch((error) => console.error(error));
-														alert('Cancha eliminada correctamente!');
+														alert('CANCHA ELIMINADA CORRECTAMENTE');
 													} catch (error) {
-														alert('Error al eliminar cancha');
+														alert('ERROR AL ELIMINAR CANCHA. INTENTA NUEVAMENTE');
 														console.error(error);
 													}
 												}}
@@ -218,11 +225,11 @@ function Canchas({ club }) {
 									});
 									const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/canchas?idClub=${club.id}`);
 									setCanchas(response.data);
-									alert('Cancha actualizada!');
+									alert('CANCHA ACTUALIZADA CORRECTAMENTE');
 									setEditModalOpen(false);
 									setCanchaToEdit(null);
 								} catch (error) {
-									alert('Error al editar cancha');
+									alert('ERROR AL EDITAR CANCHA. INTENTA NUEVAMENTE');
 								}
 							}}
 						>
@@ -238,7 +245,10 @@ function Canchas({ club }) {
 										onChange={(e) =>
 											setEditHoyos((prev) => ({
 												...prev,
-												[hoyoId]: { ...prev[hoyoId], par: Number(e.target.value) }
+												[hoyoId]: {
+													...prev[hoyoId],
+													par: Number(e.target.value)
+												}
 											}))
 										}
 										style={{ width: 50 }}
@@ -251,7 +261,10 @@ function Canchas({ club }) {
 										onChange={(e) =>
 											setEditHoyos((prev) => ({
 												...prev,
-												[hoyoId]: { ...prev[hoyoId], distancia: Number(e.target.value) }
+												[hoyoId]: {
+													...prev[hoyoId],
+													distancia: Number(e.target.value)
+												}
 											}))
 										}
 										style={{ width: 70 }}
@@ -264,7 +277,10 @@ function Canchas({ club }) {
 										onChange={(e) =>
 											setEditHoyos((prev) => ({
 												...prev,
-												[hoyoId]: { ...prev[hoyoId], dificultad: Number(e.target.value) }
+												[hoyoId]: {
+													...prev[hoyoId],
+													dificultad: Number(e.target.value)
+												}
 											}))
 										}
 										style={{ width: 70 }}

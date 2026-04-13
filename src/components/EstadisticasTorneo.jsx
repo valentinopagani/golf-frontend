@@ -8,25 +8,16 @@ import axios from 'axios';
 
 const ModalEst = lazy(() => import('./ModalEst'));
 
-const EstadisticasTorneo = memo(function EstadisticasTorneo({
-	torneo,
-	categoriaSelect,
-	setModal,
-	user
-}) {
+const EstadisticasTorneo = memo(function EstadisticasTorneo({ torneo, categoriaSelect, setModal, user }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [jugadoresFiltrados, setJugadoresFiltrados] = useState([]);
 	const [jugadorDatos, setJugadorDatos] = useState([]);
-	const [selectedCategoria, setSelectedCategoria] = useState(
-		categoriaSelect || 'Todas'
-	);
+	const [selectedCategoria, setSelectedCategoria] = useState(categoriaSelect || 'Todas');
 	const [comprobantes, setComprobantes] = useState([]);
 
 	useEffect(() => {
 		axios
-			.get(
-				`${process.env.REACT_APP_BACKEND_URL}/jugadoresFiltrados/${torneo.id}`
-			)
+			.get(`${process.env.REACT_APP_BACKEND_URL}/jugadoresFiltrados/${torneo.id}`)
 			.then((response) => setJugadoresFiltrados(response.data))
 			.catch((error) => console.error(error));
 	}, [torneo.id]);
@@ -34,9 +25,7 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({
 	useEffect(() => {
 		if (!user) return;
 		axios
-			.get(
-				`${process.env.REACT_APP_BACKEND_URL}/inscriptos?comprobantesTorneo=${torneo.id}`
-			)
+			.get(`${process.env.REACT_APP_BACKEND_URL}/inscriptos?comprobantesTorneo=${torneo.id}`)
 			.then((response) => setComprobantes(response.data))
 			.catch((error) => console.error(error));
 	}, [user, torneo.id]);
@@ -53,7 +42,7 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({
 			const data = jugadoresCategoria.map((jugador, index) => {
 				if (torneo.rondas === 1) {
 					return {
-						'POS.': index + 1,
+						'POS.': jugador.asistio === 1 ? index + 1 : 'AUS',
 						MATRÍCULA: jugador.dni,
 						JUGADOR: jugador.nombre,
 						CLUB: jugador.clubSocio,
@@ -61,26 +50,22 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({
 						IDA: jugador.scores['ronda1_ida'],
 						VUELTA: jugador.scores['ronda1_vuelta'],
 						TOTAL: jugador.totalScore,
-						NETO: jugador.scoreNeto
+						NETO: jugador.scoreNeto !== 1999 ? jugador.scoreNeto : null
 					};
 				} else {
 					return {
-						'POS.': index + 1,
+						'POS.': jugador.asistio === 1 ? index + 1 : 'AUS',
 						MATRÍCULA: jugador.dni,
 						JUGADOR: jugador.nombre,
 						CLUB: jugador.clubSocio,
 						HDC: jugador.handicap,
 						TOTAL: jugador.totalScore,
-						NETO: jugador.scoreNeto
+						NETO: jugador.scoreNeto !== 1999 ? jugador.scoreNeto : null
 					};
 				}
 			});
 
-			const title = [
-				[
-					`${torneo.nombre.toUpperCase()} - ${categoria.nombre.toUpperCase()} - ${torneo.fech_ini}`
-				]
-			];
+			const title = [[`${torneo.nombre.toUpperCase()} - ${categoria.nombre.toUpperCase()} - ${torneo.fech_ini}`]];
 			const worksheet = XLSX.utils.aoa_to_sheet(title);
 
 			if (!worksheet['!merges']) worksheet['!merges'] = [];
@@ -107,10 +92,7 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({
 			XLSX.utils.book_append_sheet(workbook, worksheet, categoria.nombre);
 		});
 
-		XLSX.writeFile(
-			workbook,
-			`Resultados ${torneo.nombre} ${torneo.fech_ini}.xlsx`
-		);
+		XLSX.writeFile(workbook, `Resultados ${torneo.nombre} ${torneo.fech_ini}.xlsx`);
 	};
 
 	const exportComprobantesToExcel = () => {
@@ -122,7 +104,7 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({
 			JUGADOR: item.nombre,
 			MATRÍCULA: item.dni,
 			'CLUB ASOCIADO': item.clubSocio,
-			'FECHA ALTA': item.fech_alta,
+			'FECHA PAGO': item.fech_alta,
 			TORNEO: torneo.nombre,
 			CATEGORIA: item.categoria,
 			TELEFONO: item.telefono,
@@ -161,41 +143,22 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({
 		XLSX.writeFile(workbook, `Comprobantes_Torneo_${torneo.nombre}.xlsx`);
 	};
 
-	// const getPosiciones = (jugadorIndex, jugadoresCategoria) => {
-	// 	if (jugadorIndex === 0) return 1;
-	// 	if (jugadorIndex > 0 && jugadoresCategoria[jugadorIndex].scoreNeto !== jugadoresCategoria[jugadorIndex - 1].scoreNeto) {
-	// 		return jugadorIndex + 1;
-	// 	}
-	// 	return jugadoresCategoria[jugadorIndex - 1] ? getPosiciones(jugadorIndex - 1, jugadoresCategoria) : 1;
-	// };
-
 	return (
 		<div className='modal'>
 			<div className='modal_cont'>
 				<div className='modal_title'>
 					{user && (
 						<div>
-							<IconButton
-								onClick={exportToExcel}
-								size='small'
-								title='Exportar tabla a Excel'
-							>
+							<IconButton onClick={exportToExcel} size='small' title='Exportar tabla a Excel'>
 								<PiMicrosoftExcelLogoFill fill='green' fontSize='30' />
 							</IconButton>
-							<IconButton
-								onClick={exportComprobantesToExcel}
-								size='small'
-								title='Descargar comprobantes de inscripcion online'
-							>
+							<IconButton onClick={exportComprobantesToExcel} size='small' title='Descargar comprobantes de inscripcion online'>
 								<TbWorldDownload fontSize='30' />
 							</IconButton>
 						</div>
 					)}
 					<h3>{torneo.nombre}</h3>
-					<select
-						value={selectedCategoria}
-						onChange={(e) => setSelectedCategoria(e.target.value)}
-					>
+					<select value={selectedCategoria} onChange={(e) => setSelectedCategoria(e.target.value)}>
 						<option value='Todas'>Todas las categorías</option>
 						{torneo.categorias.map((categoria, idx) => (
 							<option key={categoria.id ?? idx} value={categoria.nombre}>
@@ -206,11 +169,7 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({
 				</div>
 
 				{jugadoresFiltrados
-					.filter(
-						({ categoria }) =>
-							selectedCategoria === 'Todas' ||
-							categoria.nombre === selectedCategoria
-					)
+					.filter(({ categoria }) => selectedCategoria === 'Todas' || categoria.nombre === selectedCategoria)
 					.map(({ categoria, jugadoresCategoria }, idx) => {
 						return (
 							<div key={categoria.id ?? idx} className='table_container'>
@@ -223,97 +182,50 @@ const EstadisticasTorneo = memo(function EstadisticasTorneo({
 											<th className='jug'>JUGADOR</th>
 											<th className='club'>Club</th>
 											<th className='hdc'>HDC</th>
-											{torneo.rondas === 1 && (
-												<th className='ida'>Ida</th>
-											)}
-											{torneo.rondas === 1 && (
-												<th className='vuelta'>Vuelta</th>
-											)}
+											{torneo.rondas === 1 && <th className='ida'>Ida</th>}
+											{torneo.rondas === 1 && <th className='vuelta'>Vuelta</th>}
 											<th className='score'>Score</th>
 										</tr>
 									</thead>
 									<tbody>
-										{jugadoresCategoria.map(
-											(jugador, jugadorIndex) => {
-												return (
-													<tr key={jugador.dni}>
-														<td>{jugadorIndex + 1}</td>
-														<td
-															onClick={() =>
-																handleJugadorClick(jugador)
-															}
-															style={{ cursor: 'pointer' }}
+										{jugadoresCategoria.map((jugador, jugadorIndex) => {
+											return (
+												<tr key={jugador.dni}>
+													<td>{jugador.asistio === 1 && jugadorIndex + 1}</td>
+													<td onClick={() => handleJugadorClick(jugador)} style={{ cursor: 'pointer' }}>
+														{jugador.dni}
+													</td>
+													<td onClick={() => handleJugadorClick(jugador)} style={{ cursor: 'pointer' }}>
+														<b
+															style={{
+																color: 'brown',
+																fontWeight: 900
+															}}
 														>
-															{jugador.dni}
-														</td>
-														<td
-															onClick={() =>
-																handleJugadorClick(jugador)
-															}
-															style={{ cursor: 'pointer' }}
-														>
-															<b
-																style={{
-																	color: 'brown',
-																	fontWeight: 900
-																}}
-															>
-																+
-															</b>{' '}
-															{jugador.nombre}
-														</td>
-														<td>{jugador.clubSocio}</td>
-														<td className='hdc'>
-															{jugador.handicap}
-														</td>
-														{torneo.rondas === 1 &&
-															jugador.scores && (
-																<td className='ida'>
-																	{jugador.scores[
-																		'ronda1_ida'
-																	] || '-'}
-																</td>
-															)}
-														{torneo.rondas === 1 &&
-															jugador.scores && (
-																<td className='vuelta'>
-																	{jugador.scores[
-																		'ronda1_vuelta'
-																	] || '-'}
-																</td>
-															)}
-														<td
-															onClick={() =>
-																handleJugadorClick(jugador)
-															}
-															className='score'
-														>
-															{jugador.scoreNeto}
-														</td>
-													</tr>
-												);
-											}
-										)}
+															+
+														</b>{' '}
+														{jugador.nombre}
+													</td>
+													<td>{jugador.clubSocio}</td>
+													<td className='hdc'>{jugador.handicap}</td>
+													{torneo.rondas === 1 && jugador.scores && <td className='ida'>{jugador.scores['ronda1_ida'] || '-'}</td>}
+													{torneo.rondas === 1 && jugador.scores && <td className='vuelta'>{jugador.scores['ronda1_vuelta'] || '-'}</td>}
+													<td onClick={() => handleJugadorClick(jugador)} className='score'>
+														{jugador.scoreNeto !== 1999 ? jugador.scoreNeto : '-'}
+													</td>
+												</tr>
+											);
+										})}
 									</tbody>
 								</table>
 							</div>
 						);
 					})}
-				<IconButton
-					onClick={() => setModal(false)}
-					size='medium'
-					sx={{ position: 'absolute', top: 5, right: 10, color: 'white' }}
-				>
+				<IconButton onClick={() => setModal(false)} size='medium' sx={{ position: 'absolute', top: 5, right: 5, color: 'white' }}>
 					<IoCloseCircleSharp fontSize='40' />
 				</IconButton>
 			</div>
-			{isOpen && (
-				<ModalEst
-					torneo={torneo}
-					jugadorDatos={jugadorDatos}
-					setIsOpen={setIsOpen}
-				/>
-			)}
+			{isOpen && <ModalEst torneo={torneo} jugadorDatos={jugadorDatos} setIsOpen={setIsOpen} />}
 		</div>
 	);
 });

@@ -7,10 +7,10 @@ function TorneosAdmin({ torneo, club, onUpdate }) {
 		if (!window.confirm('¿Seguro que deseas eliminar este torneo?')) return;
 		try {
 			await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/torneos/${torneo.id}`);
-			window.alert('Torneo eliminado correctamente');
+			alert('TORNEO ELIMINADO CORRECTAMENTE');
 			window.location.reload();
 		} catch (error) {
-			alert('Error al eliminar el torneo');
+			alert('ERROR AL ELIMINAR TORNEO. INTENTA NUEVAMENTE');
 			console.error(error);
 		}
 	}
@@ -66,9 +66,9 @@ function TorneosAdmin({ torneo, club, onUpdate }) {
 							if (typeof onUpdate === 'function') {
 								onUpdate();
 							}
-							alert('Torneo reabierto correctamente');
+							alert('TORNEO REABIERTO CORRECTAMENTE');
 						} catch (error) {
-							alert('Error al reabrir torneo');
+							alert('ERROR AL REABRIR TORNEO. INTENTA NUEVAMENTE');
 							console.error(error);
 						}
 					}}
